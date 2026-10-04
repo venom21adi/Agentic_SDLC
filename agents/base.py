@@ -14,6 +14,7 @@ class AgentState(TypedDict, total=False):
 
 class BaseAgent(ABC):
     model_name: Optional[str] = None  # override per agent; falls back to Config.PLANNING_MODEL
+    temperature: float = 0.2          # critics override to 0 so repeated reviews of the same artifact agree
 
     def __init__(self, state_store: StateStore, name: str, llm: Optional[Any] = None):
         self.state_store = state_store
@@ -25,9 +26,9 @@ class BaseAgent(ABC):
     def llm(self):
         """Chat model; built lazily so tests can inject a fake and skip needing an API key."""
         if self._llm is None:
-            from langchain_openai import ChatOpenAI
             from config import Config
-            self._llm = ChatOpenAI(model=self.model_name or Config.PLANNING_MODEL, api_key=Config.OPENAI_API_KEY)
+            from llm import make_llm
+            self._llm = make_llm(self.name, self.model_name or Config.PLANNING_MODEL, self.temperature)
         return self._llm
 
     @abstractmethod

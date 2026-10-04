@@ -49,6 +49,7 @@ class PlanCritiqueAgent(BaseAgent):
     """Gate: reviews the latest plan + spec on four pillars. Sees the artifact only, never generator reasoning."""
 
     model_name = Config.CRITIQUE_MODEL
+    temperature = 0.0
 
     def __init__(self, state_store: StateStore, llm=None):
         super().__init__(state_store, "plan_critique", llm)

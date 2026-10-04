@@ -9,6 +9,7 @@ from agents import (
     CodeCritiqueAgent, QAStrategyAgent, TestExecutorAgent,
 )
 from config import Config
+from llm import METER, TokenBudgetExceeded
 
 logging.basicConfig(
     level=Config.LOG_LEVEL,
@@ -21,6 +22,7 @@ class AgenticSDLC:
     def __init__(self, state_store=None, agents=None):
         self.state_store = state_store or StateStore(Config.DATABASE_URL)
         self.orchestrator = Orchestrator(self.state_store)
+        self.stop_reason: str | None = None   # set when a run ends early, e.g. "token_cap"
         self.agents = agents or {
             "business_analysis": BusinessAnalysisAgent(self.state_store),
             "planning": PlanningAgent(self.state_store),
@@ -62,8 +64,11 @@ class AgenticSDLC:
         agent = self.agents[stage]
         logger.info(f"Processing ticket {ticket.id} at {ticket.status.value} via {stage}")
 
+        METER.current_ticket = ticket.id
         try:
             result = agent.invoke(ticket)
+        except TokenBudgetExceeded:
+            raise  # a spending stop is not the ticket's fault: no retry is counted, the run just ends
         except Exception:
             logger.exception(f"Agent {stage} failed on ticket {ticket.id}")
             self.orchestrator.handle_failure(ticket)
@@ -85,13 +90,21 @@ class AgenticSDLC:
         for i in range(max_iterations):
             logger.info(f"Iteration {i+1}/{max_iterations}")
 
-            processed = await self.process_next_ticket()
+            try:
+                processed = await self.process_next_ticket()
+            except TokenBudgetExceeded as e:
+                logger.error("Stopping run: %s", e)
+                self.stop_reason = "token_cap"
+                break
             if not processed:
                 logger.info("No more tickets ready for processing")
                 break
 
+        logger.info("Pipeline completed (%s)", self.stop_reason or "finished")
 
-        logger.info("Pipeline completed")
+    def usage(self) -> dict:
+        """Token, cost (estimate) and timing totals for this process's model calls."""
+        return METER.summary()
 
     def get_status(self, ticket_id: str) -> Ticket:
         """Get the current status of a ticket."""

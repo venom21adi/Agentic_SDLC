@@ -63,6 +63,7 @@ class CodeCritiqueAgent(BaseAgent):
     """
 
     model_name = Config.CRITIQUE_MODEL
+    temperature = 0.0
 
     def __init__(self, state_store: StateStore, llm=None, workspace: Optional[GitWorkspace] = None):
         super().__init__(state_store, "code_critique", llm)
