@@ -33,3 +33,9 @@ Honest state of the harness. Update this as things change.
 - Postgres has foreign keys on `code_critiques.artifact_id`; SQLite (used by tests) does not enforce them, so FK problems would only show on Postgres.
 - Test execution: **DockerRunner has never run against a real Docker daemon** (it was down); its command line, error handling and cleanup are tested against a faked `docker`, and the sandbox image (`sandbox/Dockerfile`) has never been built. Real pytest execution is verified only through LocalRunner. Only Python/pytest is supported (a frontend-only change fails with "no runnable tests"); no network in the sandbox, so generated code may only use what the image installs; no Playwright/e2e evidence; unit vs integration split is by test name/path containing "integration".
 - Retry counter is shared across critique blocks, test failures and agent errors within a region (3 total, not 3 each).
+
+## Command Center (launched)
+- Run: `docker compose up -d`, then `python -m uvicorn api:create_app --factory --port 8000`, open http://127.0.0.1:8000.
+- `demo_seed.py` fills an EMPTY database with sample asks/tickets (an escalated ticket, a retrying one, stage timeouts, a finished ask).
+- Postgres: **verified for the first time** (compose up, tables created, seed, read endpoints, decision write with FKs). Found and fixed: SQLAlchemy 2.1 picks the psycopg3 driver for plain `postgresql://` URLs; the store now normalises to psycopg2.
+- Dashboard (`ui/index.html`): one dependency-free page, auto-refresh every 5s, decision buttons wired to the API. JS syntax-checked with node; never driven in a real browser by me, so layout/interaction is unverified. No auth: anyone who can reach the port can record decisions, so keep it on 127.0.0.1.

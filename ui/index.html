@@ -120,7 +120,7 @@ const $ = (s) => document.querySelector(s);
 const REFRESH_MS = 5000;
 let selectedAsk = null, selectedTicket = null;
 
-// Build DOM without innerHTML: every string from the API goes in as text, never as markup.
+// Build DOM nodes directly: every string from the API goes in as text, never as markup.
 function h(tag, props, ...kids) {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(props || {})) {

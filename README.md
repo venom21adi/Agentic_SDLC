@@ -121,7 +121,7 @@ This design ensures:
 ## Environment Variables
 
 ```bash
-DATABASE_URL=postgresql://sdlc:sdlc_password@localhost:5432/agentic_sdlc
+DATABASE_URL=postgresql+psycopg2://sdlc:sdlc_password@localhost:5432/agentic_sdlc
 OPENAI_API_KEY=your-api-key
 LOG_LEVEL=INFO
 ```

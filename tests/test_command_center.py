@@ -175,3 +175,15 @@ def test_decision_is_recorded_with_blocked_stage(store, client):
     rows = s.query(HumanDecisionORM).filter_by(ticket_id=tid).all()
     s.close()
     assert [(r.stage, r.decision_type, r.created_by) for r in rows] == [("plan_critique", "force_advance", "me")]
+
+
+def test_dashboard_page_is_served_and_only_calls_known_endpoints(client):
+    import re
+    r = client.get("/")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
+    assert "Command Center" in r.text
+    # every API path the page fetches must exist on the server
+    routes = {route.path for route in client.app.routes}
+    called = set(re.findall(r'"(/api/[a-z]+)', r.text))
+    assert called and all(any(p == c or p.startswith(c + "/") for p in routes) for c in called), called
+    assert "innerHTML" not in r.text  # API strings must never be injected as markup

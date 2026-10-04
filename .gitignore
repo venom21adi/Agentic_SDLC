@@ -32,3 +32,4 @@ Thumbs.db
 # Generated-code workspace (implementation agent output)
 workspace/
 workspace-worktrees/
+*.log

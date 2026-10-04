@@ -163,6 +163,9 @@ class StatusHistoryORM(Base):
 
 class StateStore:
     def __init__(self, database_url: str = Config.DATABASE_URL):
+        if database_url.startswith("postgresql://"):
+            # SQLAlchemy 2.1 defaults a bare postgresql:// URL to the psycopg3 driver; this project uses psycopg2.
+            database_url = "postgresql+psycopg2://" + database_url[len("postgresql://"):]
         kwargs = {}
         if database_url in ("sqlite://", "sqlite:///:memory:"):
             # An in-memory SQLite DB is per-connection; share one so every thread sees the same data.

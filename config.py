@@ -7,7 +7,7 @@ load_dotenv()
 class Config:
     DATABASE_URL = os.getenv(
         "DATABASE_URL",
-        "postgresql://sdlc:sdlc_password@localhost:5432/agentic_sdlc"
+        "postgresql+psycopg2://sdlc:sdlc_password@localhost:5432/agentic_sdlc"
     )
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
