@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Command Center</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2330; --muted: #657084; --line: #e1e5ec;
+    --accent: #2f5fd0; --ok: #1f8a4c; --warn: #b26a00; --bad: #c0392b;
+    --ok-bg: #e3f4ea; --warn-bg: #fff1d6; --bad-bg: #fbe5e2; --idle-bg: #eceff4; --run-bg: #e4ebfb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151b; --panel: #1b2029; --ink: #e6e9ef; --muted: #8e98aa; --line: #2b3240;
+      --accent: #7ba0f5; --ok: #5cc989; --warn: #e8a948; --bad: #ef7d70;
+      --ok-bg: #1b3326; --warn-bg: #3a2d14; --bad-bg: #3b1f1c; --idle-bg: #262c38; --run-bg: #1f2c4a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: var(--panel);
+           border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 650; }
+  .kpis { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
+  .kpi { padding: 4px 10px; border-radius: 6px; background: var(--idle-bg); font-size: 12px; color: var(--muted); }
+  .kpi b { color: var(--ink); font-size: 14px; margin-right: 4px; }
+  .kpi.bad { background: var(--bad-bg); } .kpi.bad b { color: var(--bad); }
+  .kpi.warn { background: var(--warn-bg); } .kpi.warn b { color: var(--warn); }
+  .meta { color: var(--muted); font-size: 12px; }
+  button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+           border-radius: 6px; padding: 5px 10px; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.danger { color: var(--bad); }
+  main { display: grid; grid-template-columns: 280px minmax(0, 1fr) 320px; gap: 16px; padding: 16px 20px; align-items: start; }
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
+  .panel h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+  .empty { color: var(--muted); font-style: italic; }
+  .ask { padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
+  .ask:hover, .ask.sel { border-color: var(--accent); }
+  .ask .t { font-weight: 600; margin-bottom: 6px; }
+  .bar { height: 6px; background: var(--idle-bg); border-radius: 3px; overflow: hidden; margin: 6px 0 4px; }
+  .bar > i { display: block; height: 100%; background: var(--ok); }
+  .row { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;
+          background: var(--idle-bg); color: var(--muted); white-space: nowrap; }
+  .pill.run { background: var(--run-bg); color: var(--accent); }
+  .pill.ok { background: var(--ok-bg); color: var(--ok); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.bad { background: var(--bad-bg); color: var(--bad); }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; color: var(--muted); font-weight: 600; padding: 4px 8px; }
+  td { padding: 7px 8px; border-top: 1px solid var(--line); vertical-align: top; }
+  tr.tk { cursor: pointer; } tr.tk:hover td { background: var(--idle-bg); }
+  .feature h3 { margin: 0 0 4px; font-size: 14px; }
+  .feature .desc { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+  .chips { display: flex; gap: 4px; flex-wrap: wrap; }
+  .card { border: 1px solid var(--warn); background: var(--warn-bg); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+  .card .t { font-weight: 600; } .card .actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .stuckitem { padding: 6px 0; border-top: 1px solid var(--line); cursor: pointer; }
+  .stuckitem:first-of-type { border-top: 0; }
+  ol.hist { list-style: none; margin: 8px 0 0; padding: 0; border-left: 2px solid var(--line); }
+  ol.hist li { padding: 0 0 8px 12px; position: relative; font-size: 12px; }
+  ol.hist li::before { content: ""; position: absolute; left: -6px; top: 5px; width: 8px; height: 8px;
+                       border-radius: 50%; background: var(--accent); }
+  dialog { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink);
+           padding: 18px; width: min(440px, 92vw); }
+  dialog::backdrop { background: rgba(0,0,0,.45); }
+  dialog label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+  dialog textarea, dialog input { width: 100%; font: inherit; padding: 6px 8px; border: 1px solid var(--line);
+                                  border-radius: 6px; background: var(--bg); color: var(--ink); }
+  .err { color: var(--bad); font-size: 12px; margin-top: 8px; min-height: 1em; }
+  .banner { background: var(--bad-bg); color: var(--bad); padding: 8px 20px; display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Agentic SDLC · Command Center</h1>
+  <div class="kpis" id="kpis"></div>
+  <span class="meta" id="updated"></span>
+  <button id="refresh" title="Refresh now">Refresh</button>
+</header>
+<div class="banner" id="banner"></div>
+<main>
+  <aside>
+    <div class="panel"><h2>Asks</h2><div id="asks"></div></div>
+  </aside>
+  <section>
+    <div class="panel" id="detail"><div class="empty">Select an ask to see its features and tickets.</div></div>
+    <div class="panel" id="ticket" hidden></div>
+  </section>
+  <aside>
+    <div class="panel"><h2>Needs a decision</h2><div id="queue"></div></div>
+    <div class="panel"><h2>Stuck</h2><div id="stuck"></div></div>
+  </aside>
+</main>
+
+<dialog id="dlg">
+  <form method="dialog" id="dlgform">
+    <div id="dlgtitle" style="font-weight:650"></div>
+    <div class="meta" id="dlgsub"></div>
+    <label for="reason">Reasoning (recorded with the decision)</label>
+    <textarea id="reason" rows="3" required></textarea>
+    <label for="who">Your name</label>
+    <input id="who" required>
+    <div class="err" id="dlgerr"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
+      <button type="button" id="dlgcancel">Cancel</button>
+      <button type="submit" class="primary" id="dlgok">Submit</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const REFRESH_MS = 5000;
+let selectedAsk = null, selectedTicket = null;
+
+// Build DOM without innerHTML: every string from the API goes in as text, never as markup.
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) e.append(c instanceof Node ? c : String(c ?? ""));
+  return e;
+}
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  if (!r.ok) {
+    let msg = r.status + " " + r.statusText;
+    try { const j = await r.json(); if (j.detail) msg = typeof j.detail === "string" ? j.detail : JSON.stringify(j.detail); } catch (_) {}
+    throw new Error(msg);
+  }
+  return r.json();
+}
+
+function dur(sec) {
+  if (sec == null) return "–";
+  sec = Math.max(0, Math.round(sec));
+  const d = Math.floor(sec / 86400), hh = Math.floor((sec % 86400) / 3600), m = Math.floor((sec % 3600) / 60);
+  if (d) return d + "d " + hh + "h";
+  if (hh) return hh + "h " + m + "m";
+  if (m) return m + "m";
+  return sec + "s";
+}
+
+const STATUS_CLASS = {
+  merged: "ok", pr_ready: "ok", complete: "ok", decomposed: "run",
+  needs_human: "warn", needs_attention: "warn",
+  created: "", approved: "", analysis: "", not_started: "",
+};
+function statusPill(s) { return h("span", { class: "pill " + (STATUS_CLASS[s] ?? "run") }, s.replaceAll("_", " ")); }
+
+const REASON_LABEL = {
+  needs_human: "needs human", stage_timeout: "stuck in stage",
+  blocked_by_stuck_dependency: "blocked by stuck dependency",
+};
+function reasonChips(reasons) {
+  return h("span", { class: "chips" }, reasons.map((r) => h("span", { class: "pill bad" }, REASON_LABEL[r] ?? r)));
+}
+
+function renderKpis(asks, stuck, queue) {
+  const total = asks.reduce((n, a) => n + a.total, 0);
+  const kpis = [
+    h("span", { class: "kpi" }, h("b", {}, asks.length), "asks"),
+    h("span", { class: "kpi" }, h("b", {}, total), "tickets"),
+    h("span", { class: "kpi" + (queue.length ? " warn" : "") }, h("b", {}, queue.length), "need a decision"),
+    h("span", { class: "kpi" + (stuck.length ? " bad" : "") }, h("b", {}, stuck.length), "stuck"),
+  ];
+  $("#kpis").replaceChildren(...kpis);
+}
+
+function renderAsks(asks) {
+  const box = $("#asks");
+  if (!asks.length) return box.replaceChildren(h("div", { class: "empty" }, "No asks yet."));
+  box.replaceChildren(...asks.map((a) => h("div", {
+      class: "ask" + (a.id === selectedAsk ? " sel" : ""), onclick: () => { selectedAsk = a.id; selectedTicket = null; refresh(); },
+    },
+    h("div", { class: "t" }, a.title),
+    h("div", { class: "row" }, statusPill(a.status), a.total ? a.percent_complete + "% merged" : "not decomposed"),
+    h("div", { class: "bar" }, h("i", { style: "width:" + a.percent_complete + "%" })),
+    h("div", { class: "row" }, a.total + " tickets", a.stuck ? h("span", { class: "pill bad" }, a.stuck + " stuck") : ""),
+  )));
+}
+
+function ticketRow(t) {
+  return h("tr", { class: "tk", onclick: () => { selectedTicket = t.id; refresh(); } },
+    h("td", {}, t.title, t.waiting_on.length ? h("div", { class: "meta" }, "waiting on " + t.waiting_on.length + " ticket(s)") : ""),
+    h("td", {}, statusPill(t.status)),
+    h("td", {}, t.retry_count + "/" + t.max_retries),
+    h("td", {}, dur(t.seconds_in_stage)),
+    h("td", {}, t.stuck_reasons.length ? reasonChips(t.stuck_reasons) : ""),
+  );
+}
+
+function renderDetail(ask) {
+  const box = $("#detail");
+  if (!ask) return box.replaceChildren(h("div", { class: "empty" }, "Select an ask to see its features and tickets."));
+  const kids = [
+    h("h2", {}, "Ask"),
+    h("div", { style: "font-size:16px;font-weight:650" }, ask.title),
+    h("div", { class: "row", style: "margin:6px 0 12px" }, statusPill(ask.status),
+      ask.total + " tickets · " + ask.percent_complete + "% merged"),
+  ];
+  if (!ask.features.length) kids.push(h("div", { class: "empty" }, "This ask has not been broken into features yet."));
+  for (const f of ask.features) {
+    kids.push(h("div", { class: "feature", style: "margin-top:14px" },
+      h("h3", {}, f.name, " ", statusPill(f.status)),
+      h("div", { class: "desc" }, f.description + " · " + f.percent_complete + "% merged"),
+      h("table", {},
+        h("thead", {}, h("tr", {}, ["Ticket", "Status", "Retries", "In stage", "Flags"].map((x) => h("th", {}, x)))),
+        h("tbody", {}, f.tickets.map(ticketRow))),
+    ));
+  }
+  box.replaceChildren(...kids);
+}
+
+function renderTicket(t) {
+  const box = $("#ticket");
+  if (!t) { box.hidden = true; return; }
+  box.hidden = false;
+  box.replaceChildren(
+    h("div", { class: "row" }, h("h2", {}, "Ticket"), h("button", { onclick: () => { selectedTicket = null; refresh(); } }, "Close")),
+    h("div", { style: "font-size:16px;font-weight:650" }, t.title),
+    h("div", { class: "row", style: "margin:6px 0" }, statusPill(t.status),
+      "retries " + t.retry_count + "/" + t.max_retries + " · in stage " + dur(t.seconds_in_stage)),
+    t.stuck_reasons.length ? reasonChips(t.stuck_reasons) : "",
+    t.blocked_from ? h("div", { class: "meta" }, "escalated from " + t.blocked_from.replaceAll("_", " ")) : "",
+    h("ol", { class: "hist" }, t.history.map((x) =>
+      h("li", {}, (x.from_status ? x.from_status.replaceAll("_", " ") + " → " : "created as ") + x.to_status.replaceAll("_", " "),
+        h("div", { class: "meta" }, new Date(x.entered_at + "Z").toLocaleString())))),
+  );
+}
+
+const ACTIONS = [
+  ["approve", "Approve", "primary"], ["force_advance", "Force advance", ""],
+  ["resume_with_guidance", "Resume", ""], ["reject", "Reject", "danger"],
+];
+function renderQueue(queue) {
+  const box = $("#queue");
+  if (!queue.length) return box.replaceChildren(h("div", { class: "empty" }, "Nothing waiting on a human."));
+  box.replaceChildren(...queue.map((t) => h("div", { class: "card" },
+    h("div", { class: "t" }, t.title),
+    h("div", { class: "meta" }, "escalated from " + (t.blocked_from || "?").replaceAll("_", " ") + " · waiting " + dur(t.seconds_in_stage)),
+    h("div", { class: "actions" }, ACTIONS.map(([type, label, cls]) =>
+      h("button", { class: cls, onclick: () => openDecision(t, type, label) }, label))),
+  )));
+}
+
+function renderStuck(stuck) {
+  const box = $("#stuck");
+  if (!stuck.length) return box.replaceChildren(h("div", { class: "empty" }, "Nothing is stuck."));
+  box.replaceChildren(...stuck.map((t) => h("div", { class: "stuckitem", onclick: () => { selectedTicket = t.id; refresh(); } },
+    h("div", {}, t.title), h("div", { class: "row" }, statusPill(t.status), dur(t.seconds_in_stage)), reasonChips(t.stuck_reasons))));
+}
+
+// ---- decision dialog ----
+let pending = null;
+function openDecision(ticket, type, label) {
+  pending = { id: ticket.id, type };
+  $("#dlgtitle").textContent = label + ": " + ticket.title;
+  $("#dlgsub").textContent = "Escalated from " + (ticket.blocked_from || "?").replaceAll("_", " ");
+  $("#reason").value = "";
+  try { $("#who").value = localStorage.getItem("cc-name") || ""; } catch (_) { $("#who").value = ""; }
+  $("#dlgerr").textContent = "";
+  $("#dlg").showModal();
+}
+$("#dlgcancel").addEventListener("click", () => $("#dlg").close());
+$("#dlgform").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const who = $("#who").value.trim(), reason = $("#reason").value.trim();
+  if (!who || !reason) { $("#dlgerr").textContent = "Reasoning and your name are required."; return; }
+  $("#dlgok").disabled = true;
+  try {
+    await api("/api/tickets/" + encodeURIComponent(pending.id) + "/decision", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ decision_type: pending.type, reasoning: reason, created_by: who }),
+    });
+    try { localStorage.setItem("cc-name", who); } catch (_) {}
+    $("#dlg").close();
+    refresh();
+  } catch (e) { $("#dlgerr").textContent = e.message; }
+  finally { $("#dlgok").disabled = false; }
+});
+
+// ---- refresh loop ----
+async function refresh() {
+  try {
+    const [asks, stuck, queue] = await Promise.all([api("/api/asks"), api("/api/stuck"), api("/api/decisions")]);
+    if (selectedAsk && !asks.some((a) => a.id === selectedAsk)) selectedAsk = null;
+    if (!selectedAsk && asks.length) selectedAsk = asks[0].id;
+    const [ask, ticket] = await Promise.all([
+      selectedAsk ? api("/api/asks/" + encodeURIComponent(selectedAsk)).catch(() => null) : null,
+      selectedTicket ? api("/api/tickets/" + encodeURIComponent(selectedTicket)).catch(() => null) : null,
+    ]);
+    renderKpis(asks, stuck, queue); renderAsks(asks); renderDetail(ask);
+    renderTicket(ticket); renderQueue(queue); renderStuck(stuck);
+    $("#banner").style.display = "none";
+    $("#updated").textContent = "updated " + new Date().toLocaleTimeString();
+  } catch (e) {
+    $("#banner").textContent = "Cannot reach the API: " + e.message;
+    $("#banner").style.display = "block";
+  }
+}
+$("#refresh").addEventListener("click", refresh);
+refresh();
+setInterval(() => { if (!$("#dlg").open) refresh(); }, REFRESH_MS);
+</script>
+</body>
+</html>
