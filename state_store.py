@@ -475,6 +475,19 @@ class StateStore:
         finally:
             session.close()
 
+    def get_edges_among(self, ticket_ids: List[str]) -> List[DAGEdge]:
+        """Dependency edges whose two ends are both in `ticket_ids`."""
+        if not ticket_ids:
+            return []
+        session = self.get_session()
+        try:
+            orms = session.query(DAGEdgeORM).filter(
+                DAGEdgeORM.source_ticket_id.in_(ticket_ids), DAGEdgeORM.target_ticket_id.in_(ticket_ids)
+            ).all()
+            return [DAGEdge.model_validate(o, from_attributes=True) for o in orms]
+        finally:
+            session.close()
+
     def get_dag_predecessors(self, ticket_id: str) -> List[str]:
         session = self.get_session()
         try:

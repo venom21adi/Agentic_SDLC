@@ -157,6 +157,7 @@ class CommandCenter:
             rollup = {**self._rollup(children), "status": "analysis"}  # not yet broken into tickets
         else:
             rollup = self._rollup(children)
+        edges = self.store.get_edges_among([c.id for c in children])
         return {
             "id": ask.id,
             "title": ask.title,
@@ -164,6 +165,15 @@ class CommandCenter:
             **rollup,
             "features": features,
             "stuck_tickets": [tid for f in features for tid in f["stuck_tickets"]],
+            # dependency graph: an edge means `from` must be merged before `to` can start
+            "edges": [
+                {"from": e.source_ticket_id, "to": e.target_ticket_id, "reasoning": e.reasoning} for e in edges
+            ],
+            # this ask's tickets that agents gave up on, longest-waiting first
+            "decisions": sorted(
+                (tv for f in features for tv in f["tickets"] if tv["status"] == S.NEEDS_HUMAN.value),
+                key=lambda tv: -(tv["seconds_in_stage"] or 0),
+            ),
         }
 
     def list_asks(self, now: Optional[datetime] = None) -> list[dict]:
@@ -173,7 +183,7 @@ class CommandCenter:
         for a in asks:
             v = self.ask_view(a.id, now)
             out.append({k: v[k] for k in ("id", "title", "ask_status", "status", "total", "percent_complete")}
-                       | {"stuck": len(v["stuck_tickets"])})
+                       | {"stuck": len(v["stuck_tickets"]), "needs_decision": len(v["decisions"])})
         return out
 
     # ---- stuck list and decision queue ----

@@ -212,3 +212,24 @@ def test_escalation_outside_a_gate_retries_the_same_step(store, cc):
     store.update_ticket_status("t", S.NEEDS_HUMAN)
     v = cc.ticket_view("t")
     assert v["send_back_goes_to"] == "approved" and v["accept_goes_to"] == "spec_authoring"
+
+
+def test_ask_view_carries_the_dependency_graph_and_its_own_decisions(store, cc):
+    ask, kids = decomposed_ask(store)
+    escalate(store, kids["User table"].id)
+    v = cc.ask_view(ask.id)
+    by_id = {t.id: t.title for t in kids.values()}
+    assert {(by_id[e["from"]], by_id[e["to"]]) for e in v["edges"]} == {
+        ("User table", "Login API"), ("User table", "Verify email")}
+    assert all(e["reasoning"] for e in v["edges"])
+    assert [d["title"] for d in v["decisions"]] == ["User table"]
+
+
+def test_graph_and_decisions_are_scoped_to_their_own_ask(store, cc):
+    ask1, kids1 = decomposed_ask(store)
+    ask2, kids2 = decomposed_ask(store)
+    escalate(store, kids2["User table"].id)
+    assert cc.ask_view(ask1.id)["decisions"] == []
+    assert {e["from"] for e in cc.ask_view(ask1.id)["edges"]} <= {t.id for t in kids1.values()}
+    counts = {a["id"]: a["needs_decision"] for a in cc.list_asks()}
+    assert counts == {ask1.id: 0, ask2.id: 1}
