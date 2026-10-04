@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Optional
 
 from config import Config
+from orchestrator import NEXT_STATUS, ROLLBACK_STATUS
 from schemas import Ticket, TicketStatus as S
 from state_store import StateStore
 
@@ -61,6 +62,10 @@ class CommandCenter:
                 blockers.append(pid)
         return blockers
 
+    def _title(self, ticket_id: str) -> str:
+        t = self.store.get_ticket(ticket_id)
+        return t.title if t else ticket_id
+
     def ticket_view(self, ticket_id: str, now: Optional[datetime] = None) -> Optional[dict]:
         now = now or datetime.utcnow()
         t = self.store.get_ticket(ticket_id)
@@ -70,19 +75,30 @@ class CommandCenter:
         stuck_deps = self._blocked_by_stuck(t.id, now, {})
         if stuck_deps:
             reasons.append("blocked_by_stuck_dependency")
+        waiting_on = self._unmerged_predecessors(t.id)
+        parent = self.store.get_ticket(t.parent_id) if t.parent_id else None
+        feature = self.store.get_feature(t.feature_id) if t.feature_id else None
+        blocked = t.blocked_from
         return {
             "id": t.id,
             "title": t.title,
             "status": t.status.value,
             "parent_id": t.parent_id,
             "feature_id": t.feature_id,
+            "ask_title": parent.title if parent else None,
+            "feature_name": feature.name if feature else None,
             "retry_count": t.retry_count,
             "max_retries": t.max_retries,
-            "blocked_from": t.blocked_from.value if t.blocked_from else None,
+            "blocked_from": blocked.value if blocked else None,
+            # What each human decision would do, taken from the orchestrator's own tables.
+            "accept_goes_to": NEXT_STATUS[blocked].value if blocked in NEXT_STATUS else None,
+            "send_back_goes_to": (ROLLBACK_STATUS.get(blocked, blocked).value if blocked else None),
             "seconds_in_stage": self._seconds_in_stage(t, now),
-            "waiting_on": self._unmerged_predecessors(t.id),
+            "waiting_on": waiting_on,
+            "waiting_on_titles": [self._title(i) for i in waiting_on],
             "stuck_reasons": reasons,
             "stuck_dependencies": stuck_deps,
+            "stuck_dependency_titles": [self._title(i) for i in stuck_deps],
             "history": [
                 {**h, "entered_at": h["entered_at"].isoformat()}
                 for h in self.store.get_status_history(t.id)

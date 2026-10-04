@@ -511,6 +511,14 @@ class StateStore:
         finally:
             session.close()
 
+    def get_feature(self, feature_id: str) -> Optional[Feature]:
+        session = self.get_session()
+        try:
+            orm = session.query(FeatureORM).filter(FeatureORM.id == feature_id).first()
+            return Feature.model_validate(orm, from_attributes=True) if orm else None
+        finally:
+            session.close()
+
     def get_all_features(self) -> List[Feature]:
         session = self.get_session()
         try:

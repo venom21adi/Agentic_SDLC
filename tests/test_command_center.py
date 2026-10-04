@@ -187,3 +187,28 @@ def test_dashboard_page_is_served_and_only_calls_known_endpoints(client):
     called = set(re.findall(r'"(/api/[a-z]+)', r.text))
     assert called and all(any(p == c or p.startswith(c + "/") for p in routes) for c in called), called
     assert "innerHTML" not in r.text  # API strings must never be injected as markup
+
+
+def test_ticket_view_has_the_plain_english_context_the_dashboard_needs(store, cc):
+    ask, kids = decomposed_ask(store)
+    root, login = kids["User table"], kids["Login API"]
+    escalate(store, root.id)
+
+    v = cc.ticket_view(root.id)
+    assert v["ask_title"] == "auth" and v["feature_name"] == "Auth"
+    # what each human decision would do, straight from the orchestrator's tables
+    assert v["blocked_from"] == "plan_critique"
+    assert v["accept_goes_to"] == "plan_approved" and v["send_back_goes_to"] == "spec_authoring"
+
+    w = cc.ticket_view(login.id)
+    assert w["waiting_on_titles"] == ["User table"]
+    assert w["stuck_dependency_titles"] == ["User table"]  # the escalated root is what blocks it
+    assert w["accept_goes_to"] is None and w["send_back_goes_to"] is None  # not escalated: nothing to decide
+
+
+def test_escalation_outside_a_gate_retries_the_same_step(store, cc):
+    t = store.create_ticket(Ticket(id="t", title="t", description="d", status=S.APPROVED))
+    store.set_blocked_from("t", S.APPROVED)
+    store.update_ticket_status("t", S.NEEDS_HUMAN)
+    v = cc.ticket_view("t")
+    assert v["send_back_goes_to"] == "approved" and v["accept_goes_to"] == "spec_authoring"

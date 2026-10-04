@@ -19,12 +19,12 @@
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+         font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
   header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: var(--panel);
            border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
   header h1 { font-size: 16px; margin: 0; font-weight: 650; }
   .kpis { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
-  .kpi { padding: 4px 10px; border-radius: 6px; background: var(--idle-bg); font-size: 12px; color: var(--muted); }
+  .kpi { padding: 4px 10px; border-radius: 6px; background: var(--idle-bg); font-size: 12px; color: var(--muted); cursor: help; }
   .kpi b { color: var(--ink); font-size: 14px; margin-right: 4px; }
   .kpi.bad { background: var(--bad-bg); } .kpi.bad b { color: var(--bad); }
   .kpi.warn { background: var(--warn-bg); } .kpi.warn b { color: var(--warn); }
@@ -33,41 +33,58 @@
            border-radius: 6px; padding: 5px 10px; }
   button:hover { border-color: var(--accent); }
   button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  button.danger { color: var(--bad); }
-  main { display: grid; grid-template-columns: 280px minmax(0, 1fr) 320px; gap: 16px; padding: 16px 20px; align-items: start; }
+  main { display: grid; grid-template-columns: 270px minmax(0, 1fr) 330px; gap: 16px; padding: 16px 20px; align-items: start; }
   @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
   .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
   .panel h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+  .panel .sub { color: var(--muted); font-size: 12px; margin: -6px 0 10px; }
   .empty { color: var(--muted); font-style: italic; }
   .ask { padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
   .ask:hover, .ask.sel { border-color: var(--accent); }
-  .ask .t { font-weight: 600; margin-bottom: 6px; }
+  .ask .t { font-weight: 600; margin-bottom: 4px; }
   .bar { height: 6px; background: var(--idle-bg); border-radius: 3px; overflow: hidden; margin: 6px 0 4px; }
   .bar > i { display: block; height: 100%; background: var(--ok); }
   .row { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); }
   .pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;
-          background: var(--idle-bg); color: var(--muted); white-space: nowrap; }
+          background: var(--idle-bg); color: var(--muted); white-space: nowrap; cursor: help; }
   .pill.run { background: var(--run-bg); color: var(--accent); }
   .pill.ok { background: var(--ok-bg); color: var(--ok); }
   .pill.warn { background: var(--warn-bg); color: var(--warn); }
   .pill.bad { background: var(--bad-bg); color: var(--bad); }
+  .track { display: flex; gap: 2px; margin-top: 5px; }
+  .seg { width: 14px; height: 5px; border-radius: 2px; background: var(--idle-bg); }
+  .seg.done { background: var(--ok); } .seg.cur { background: var(--accent); } .seg.cur.warn { background: var(--warn); }
+  .tracklabels { display: flex; gap: 2px; font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .tracklabels span { width: 14px; }
+  .bigtrack .seg { width: 44px; height: 8px; } .bigtrack { gap: 3px; }
+  .biglabels { display: flex; gap: 3px; font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .biglabels span { width: 44px; text-align: center; overflow: visible; white-space: nowrap; }
   table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 11px; color: var(--muted); font-weight: 600; padding: 4px 8px; }
-  td { padding: 7px 8px; border-top: 1px solid var(--line); vertical-align: top; }
+  th { text-align: left; font-size: 11px; color: var(--muted); font-weight: 600; padding: 4px 8px; cursor: help; }
+  td { padding: 8px; border-top: 1px solid var(--line); vertical-align: top; }
   tr.tk { cursor: pointer; } tr.tk:hover td { background: var(--idle-bg); }
-  .feature h3 { margin: 0 0 4px; font-size: 14px; }
+  .feature h3 { margin: 0 0 2px; font-size: 14px; }
   .feature .desc { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
-  .chips { display: flex; gap: 4px; flex-wrap: wrap; }
+  .chips { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+  .note { font-size: 13px; padding: 8px 10px; border-radius: 8px; background: var(--idle-bg); margin-top: 8px; }
+  .note.bad { background: var(--bad-bg); } .note.warn { background: var(--warn-bg); }
   .card { border: 1px solid var(--warn); background: var(--warn-bg); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
-  .card .t { font-weight: 600; } .card .actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-  .stuckitem { padding: 6px 0; border-top: 1px solid var(--line); cursor: pointer; }
+  .card .t { font-weight: 600; } .card .why { font-size: 12px; margin: 4px 0; }
+  .card .actions { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .card .actions button { text-align: left; }
+  .card .actions small { display: block; color: var(--muted); font-size: 11px; }
+  .stuckitem { padding: 8px 0; border-top: 1px solid var(--line); cursor: pointer; }
   .stuckitem:first-of-type { border-top: 0; }
+  .stuckitem .why { font-size: 12px; color: var(--muted); margin-top: 2px; }
   ol.hist { list-style: none; margin: 8px 0 0; padding: 0; border-left: 2px solid var(--line); }
   ol.hist li { padding: 0 0 8px 12px; position: relative; font-size: 12px; }
   ol.hist li::before { content: ""; position: absolute; left: -6px; top: 5px; width: 8px; height: 8px;
                        border-radius: 50%; background: var(--accent); }
+  details.help summary { cursor: pointer; font-weight: 650; }
+  details.help .body { font-size: 13px; margin-top: 8px; }
+  details.help p { margin: 6px 0; } details.help ul { margin: 4px 0 8px 18px; padding: 0; }
   dialog { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink);
-           padding: 18px; width: min(440px, 92vw); }
+           padding: 18px; width: min(460px, 92vw); }
   dialog::backdrop { background: rgba(0,0,0,.45); }
   dialog label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
   dialog textarea, dialog input { width: 100%; font: inherit; padding: 6px 8px; border: 1px solid var(--line);
@@ -86,30 +103,53 @@
 <div class="banner" id="banner"></div>
 <main>
   <aside>
-    <div class="panel"><h2>Asks</h2><div id="asks"></div></div>
+    <div class="panel"><h2>Asks</h2><div class="sub">Requests that were submitted. Click one.</div><div id="asks"></div></div>
   </aside>
   <section>
+    <div class="panel">
+      <details class="help" id="help" open>
+        <summary>How to read this page</summary>
+        <div class="body">
+          <p><b>The idea.</b> You submit an <b>ask</b> (a request). Agents break it into <b>features</b> and small <b>tickets</b>, and each ticket moves through the steps below. Agents do everything up to “Human review”; a person reviews and merges.</p>
+          <div class="track bigtrack" id="helptrack"></div><div class="biglabels" id="helplabels"></div>
+          <p style="margin-top:10px"><b>Colours.</b> <span class="pill">grey</span> not started or waiting &nbsp;
+            <span class="pill run">blue</span> agents working &nbsp; <span class="pill ok">green</span> done &nbsp;
+            <span class="pill warn">amber</span> waiting on a person &nbsp; <span class="pill bad">red</span> something is wrong.</p>
+          <p><b>Attempts.</b> When a review or test fails, the ticket is sent back and tries again. Each ticket gets <b>3 failed attempts</b>
+            per stretch of work; after the third it stops and appears under <b>Needs a decision</b>. “1 of 3” means one attempt has been used.</p>
+          <p><b>“Stuck” means one of three things:</b></p>
+          <ul>
+            <li><b>needs you</b> – it hit the attempt limit and agents will not try again on their own.</li>
+            <li><b>too slow</b> – it has sat in one step for longer than expected.</li>
+            <li><b>blocked</b> – it cannot start because a ticket it depends on is itself stuck.</li>
+          </ul>
+          <p><b>Your two buttons</b> (under “Needs a decision”): <b>Accept and move on</b> overrides the failed check and pushes the ticket forward;
+            <b>Send back</b> gives it another round of attempts. Each button says exactly where the ticket will go.</p>
+        </div>
+      </details>
+    </div>
     <div class="panel" id="detail"><div class="empty">Select an ask to see its features and tickets.</div></div>
     <div class="panel" id="ticket" hidden></div>
   </section>
   <aside>
-    <div class="panel"><h2>Needs a decision</h2><div id="queue"></div></div>
-    <div class="panel"><h2>Stuck</h2><div id="stuck"></div></div>
+    <div class="panel"><h2>Needs a decision</h2><div class="sub">Tickets agents gave up on. Only you can unblock these.</div><div id="queue"></div></div>
+    <div class="panel"><h2>Stuck</h2><div class="sub">Everything that is not progressing, and why.</div><div id="stuck"></div></div>
   </aside>
 </main>
 
 <dialog id="dlg">
   <form method="dialog" id="dlgform">
     <div id="dlgtitle" style="font-weight:650"></div>
-    <div class="meta" id="dlgsub"></div>
-    <label for="reason">Reasoning (recorded with the decision)</label>
+    <div class="note" id="dlgeffect"></div>
+    <label for="reason">Why are you making this call? (saved with the decision)</label>
     <textarea id="reason" rows="3" required></textarea>
     <label for="who">Your name</label>
     <input id="who" required>
+    <div class="meta" style="margin-top:8px">Note: agents do not read your reasoning yet; it is recorded for the audit trail only.</div>
     <div class="err" id="dlgerr"></div>
     <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
       <button type="button" id="dlgcancel">Cancel</button>
-      <button type="submit" class="primary" id="dlgok">Submit</button>
+      <button type="submit" class="primary" id="dlgok">Confirm</button>
     </div>
   </form>
 </dialog>
@@ -151,31 +191,88 @@ function dur(sec) {
   if (m) return m + "m";
   return sec + "s";
 }
+const list = (xs) => xs.length <= 1 ? (xs[0] || "") : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
 
-const STATUS_CLASS = {
-  merged: "ok", pr_ready: "ok", complete: "ok", decomposed: "run",
-  needs_human: "warn", needs_attention: "warn",
-  created: "", approved: "", analysis: "", not_started: "",
+// status -> [plain name, what it means, colour]
+const STATUS = {
+  created: ["submitted", "Submitted, but not yet broken down into tickets.", ""],
+  decomposed: ["broken into tickets", "Split into features and tickets; progress is tracked on the tickets.", "run"],
+  approved: ["ready to plan", "Ready for an agent to plan it.", ""],
+  spec_authoring: ["writing spec", "An agent is writing the technical specification.", "run"],
+  plan_critique: ["plan review", "Reviewers are checking the plan and spec for problems.", "run"],
+  plan_approved: ["plan approved", "The plan was accepted; it is about to be built.", "run"],
+  implementation: ["coding", "An agent is writing the code.", "run"],
+  code_critique: ["code review", "Reviewers are checking the code for problems.", "run"],
+  qa_strategy: ["test planning", "Deciding how the change should be tested.", "run"],
+  testing: ["testing", "Automated tests are running against the code.", "run"],
+  pr_ready: ["ready for human review", "Agents are finished. A person needs to review and merge it.", "warn"],
+  merged: ["merged", "Finished and merged.", "ok"],
+  needs_human: ["needs you", "Agents gave up after repeated failures; a person must decide what happens next.", "warn"],
 };
-function statusPill(s) { return h("span", { class: "pill " + (STATUS_CLASS[s] ?? "run") }, s.replaceAll("_", " ")); }
+const ROLLUP = {
+  not_started: ["not started", ""], analysis: ["being analysed", ""], in_progress: ["in progress", "run"],
+  needs_attention: ["needs you", "warn"], complete: ["complete", "ok"],
+};
+const name = (s) => (STATUS[s] || [String(s).replaceAll("_", " ")])[0];
 
-const REASON_LABEL = {
-  needs_human: "needs human", stage_timeout: "stuck in stage",
-  blocked_by_stuck_dependency: "blocked by stuck dependency",
-};
-function reasonChips(reasons) {
-  return h("span", { class: "chips" }, reasons.map((r) => h("span", { class: "pill bad" }, REASON_LABEL[r] ?? r)));
+function statusPill(s, ticket) {
+  const waiting = s === "approved" && ticket && ticket.waiting_on.length;
+  const [label, help, cls] = STATUS[s] || [s, "", "run"];
+  return h("span", { class: "pill " + (waiting ? "" : cls), title: waiting ? "Cannot start until the tickets it depends on are merged." : help },
+    waiting ? "waiting on others" : label);
 }
+function rollupPill(s) {
+  const [label, cls] = ROLLUP[s] || [s, ""];
+  return h("span", { class: "pill " + cls, title: "Overall state computed from the tickets underneath." }, label);
+}
+
+// The 8 steps a ticket moves through; index of the step each status is "in".
+const STEPS = ["Spec", "Plan review", "Build", "Code review", "Test plan", "Testing", "Human review", "Merged"];
+const STEP_OF = { approved: -1, spec_authoring: 0, plan_critique: 1, plan_approved: 2, implementation: 2,
+                  code_critique: 3, qa_strategy: 4, testing: 5, pr_ready: 6, merged: 7 };
+function tracker(status, blockedFrom, big) {
+  const halted = status === "needs_human";
+  const at = halted ? (STEP_OF[blockedFrom] ?? -1) : (STEP_OF[status] ?? -1);
+  const segs = STEPS.map((label, i) => {
+    let cls = "seg";
+    if (status === "merged" || i < at) cls += " done";
+    else if (i === at) cls += " cur" + (halted || status === "pr_ready" ? " warn" : "");
+    return h("i", { class: cls, title: label });
+  });
+  return h("div", { class: "track" + (big ? " bigtrack" : "") }, segs);
+}
+
+// Plain-English reasons a ticket is flagged.
+function why(t) {
+  const out = [];
+  const r = t.stuck_reasons;
+  if (r.includes("needs_human"))
+    out.push("Stopped: it failed " + name(t.blocked_from) + " " + t.max_retries + " times, so agents will not retry until you decide.");
+  else if (r.includes("stage_timeout"))
+    out.push("It has sat in “" + name(t.status) + "” for " + dur(t.seconds_in_stage) + " without moving, which is longer than expected.");
+  if (r.includes("blocked_by_stuck_dependency")) {
+    const n = t.stuck_dependency_titles;
+    out.push("It cannot start because " + list(n) + (n.length > 1 ? " are" : " is") + " stuck.");
+  }
+  return out;
+}
+const FLAG = { needs_human: "needs you", stage_timeout: "too slow", blocked_by_stuck_dependency: "blocked" };
+function flagChips(t) {
+  const tips = why(t).join(" ");
+  return h("span", { class: "chips" }, t.stuck_reasons.map((r) => h("span", { class: "pill bad", title: tips }, FLAG[r] || r)));
+}
+function attempts(t) { return t.retry_count + " of " + t.max_retries; }
 
 function renderKpis(asks, stuck, queue) {
   const total = asks.reduce((n, a) => n + a.total, 0);
-  const kpis = [
-    h("span", { class: "kpi" }, h("b", {}, asks.length), "asks"),
-    h("span", { class: "kpi" }, h("b", {}, total), "tickets"),
-    h("span", { class: "kpi" + (queue.length ? " warn" : "") }, h("b", {}, queue.length), "need a decision"),
-    h("span", { class: "kpi" + (stuck.length ? " bad" : "") }, h("b", {}, stuck.length), "stuck"),
-  ];
-  $("#kpis").replaceChildren(...kpis);
+  $("#kpis").replaceChildren(
+    h("span", { class: "kpi", title: "Requests submitted so far." }, h("b", {}, asks.length), "asks"),
+    h("span", { class: "kpi", title: "Tickets across all asks." }, h("b", {}, total), "tickets"),
+    h("span", { class: "kpi" + (queue.length ? " warn" : ""), title: "Tickets that agents gave up on. Only a person can unblock them." },
+      h("b", {}, queue.length), "need your decision"),
+    h("span", { class: "kpi" + (stuck.length ? " bad" : ""), title: "Tickets not progressing: need a decision, too slow, or blocked by another stuck ticket." },
+      h("b", {}, stuck.length), "stuck"),
+  );
 }
 
 function renderAsks(asks) {
@@ -185,38 +282,48 @@ function renderAsks(asks) {
       class: "ask" + (a.id === selectedAsk ? " sel" : ""), onclick: () => { selectedAsk = a.id; selectedTicket = null; refresh(); },
     },
     h("div", { class: "t" }, a.title),
-    h("div", { class: "row" }, statusPill(a.status), a.total ? a.percent_complete + "% merged" : "not decomposed"),
+    h("div", { class: "row" }, rollupPill(a.status),
+      a.total ? Math.round(a.percent_complete) + "% done" : "no tickets yet"),
     h("div", { class: "bar" }, h("i", { style: "width:" + a.percent_complete + "%" })),
-    h("div", { class: "row" }, a.total + " tickets", a.stuck ? h("span", { class: "pill bad" }, a.stuck + " stuck") : ""),
+    h("div", { class: "row" }, a.total + (a.total === 1 ? " ticket" : " tickets"),
+      a.stuck ? h("span", { class: "pill bad", title: "Tickets under this ask that are not progressing." }, a.stuck + " stuck") : ""),
   )));
 }
 
 function ticketRow(t) {
   return h("tr", { class: "tk", onclick: () => { selectedTicket = t.id; refresh(); } },
-    h("td", {}, t.title, t.waiting_on.length ? h("div", { class: "meta" }, "waiting on " + t.waiting_on.length + " ticket(s)") : ""),
-    h("td", {}, statusPill(t.status)),
-    h("td", {}, t.retry_count + "/" + t.max_retries),
+    h("td", {}, t.title,
+      t.waiting_on_titles.length ? h("div", { class: "meta" }, "waiting for " + list(t.waiting_on_titles)) : ""),
+    h("td", {}, statusPill(t.status, t), tracker(t.status, t.blocked_from)),
+    h("td", {}, attempts(t)),
     h("td", {}, dur(t.seconds_in_stage)),
-    h("td", {}, t.stuck_reasons.length ? reasonChips(t.stuck_reasons) : ""),
+    h("td", {}, t.stuck_reasons.length ? flagChips(t) : ""),
   );
 }
 
 function renderDetail(ask) {
   const box = $("#detail");
   if (!ask) return box.replaceChildren(h("div", { class: "empty" }, "Select an ask to see its features and tickets."));
+  const counts = Object.entries(ask.by_status).map(([s, n]) => n + " " + name(s));
   const kids = [
     h("h2", {}, "Ask"),
     h("div", { style: "font-size:16px;font-weight:650" }, ask.title),
-    h("div", { class: "row", style: "margin:6px 0 12px" }, statusPill(ask.status),
-      ask.total + " tickets · " + ask.percent_complete + "% merged"),
+    h("div", { class: "row", style: "margin:6px 0" }, rollupPill(ask.status),
+      ask.total ? Math.round(ask.percent_complete) + "% of tickets merged" : "not broken into tickets yet"),
+    counts.length ? h("div", { class: "meta" }, counts.join(" · ")) : "",
   ];
-  if (!ask.features.length) kids.push(h("div", { class: "empty" }, "This ask has not been broken into features yet."));
+  if (!ask.features.length) kids.push(h("div", { class: "note" }, "This ask has not been broken into features and tickets yet."));
   for (const f of ask.features) {
-    kids.push(h("div", { class: "feature", style: "margin-top:14px" },
-      h("h3", {}, f.name, " ", statusPill(f.status)),
-      h("div", { class: "desc" }, f.description + " · " + f.percent_complete + "% merged"),
+    kids.push(h("div", { class: "feature", style: "margin-top:16px" },
+      h("h3", {}, f.name, " ", rollupPill(f.status)),
+      h("div", { class: "desc" }, "Feature · " + f.tickets.filter((t) => t.status === "merged").length + " of " + f.total + " tickets merged"),
       h("table", {},
-        h("thead", {}, h("tr", {}, ["Ticket", "Status", "Retries", "In stage", "Flags"].map((x) => h("th", {}, x)))),
+        h("thead", {}, h("tr", {},
+          h("th", { title: "One small unit of work." }, "Ticket"),
+          h("th", { title: "Where it is now. The bar shows the 8 steps: Spec, Plan review, Build, Code review, Test plan, Testing, Human review, Merged." }, "Step"),
+          h("th", { title: "Failed attempts used in the current stretch of work. At the limit it stops and asks you." }, "Attempts"),
+          h("th", { title: "How long it has been in its current step." }, "Time here"),
+          h("th", { title: "Why it is flagged, if it is. Hover a flag for details." }, "Flags"))),
         h("tbody", {}, f.tickets.map(ticketRow))),
     ));
   }
@@ -227,31 +334,40 @@ function renderTicket(t) {
   const box = $("#ticket");
   if (!t) { box.hidden = true; return; }
   box.hidden = false;
+  const problems = why(t);
+  const notes = [];
+  if (problems.length) notes.push(h("div", { class: "note bad" }, problems.join(" ")));
+  else if (t.waiting_on_titles.length) notes.push(h("div", { class: "note" }, "Waiting for " + list(t.waiting_on_titles) + " to be merged before it can start."));
+  if (t.retry_count > 0 && t.status !== "needs_human")
+    notes.push(h("div", { class: "note warn" }, attempts(t) + " attempts used: it failed and was sent back. At " + t.max_retries + " it stops and asks you."));
   box.replaceChildren(
-    h("div", { class: "row" }, h("h2", {}, "Ticket"), h("button", { onclick: () => { selectedTicket = null; refresh(); } }, "Close")),
+    h("div", { class: "row" }, h("h2", {}, "Ticket detail"), h("button", { onclick: () => { selectedTicket = null; refresh(); } }, "Close")),
     h("div", { style: "font-size:16px;font-weight:650" }, t.title),
-    h("div", { class: "row", style: "margin:6px 0" }, statusPill(t.status),
-      "retries " + t.retry_count + "/" + t.max_retries + " · in stage " + dur(t.seconds_in_stage)),
-    t.stuck_reasons.length ? reasonChips(t.stuck_reasons) : "",
-    t.blocked_from ? h("div", { class: "meta" }, "escalated from " + t.blocked_from.replaceAll("_", " ")) : "",
+    t.ask_title ? h("div", { class: "meta" }, t.ask_title + (t.feature_name ? " › " + t.feature_name : "")) : "",
+    h("div", { class: "row", style: "margin:8px 0 0" }, statusPill(t.status, t), "attempts " + attempts(t) + " · here for " + dur(t.seconds_in_stage)),
+    h("div", {}, tracker(t.status, t.blocked_from, true)),
+    h("div", { class: "biglabels" }, STEPS.map((s) => h("span", {}, s))),
+    h("div", { class: "meta", style: "margin-top:6px" }, (STATUS[t.status] || [])[1] || ""),
+    ...notes,
+    h("div", { class: "meta", style: "margin-top:12px" }, "History (oldest first)"),
     h("ol", { class: "hist" }, t.history.map((x) =>
-      h("li", {}, (x.from_status ? x.from_status.replaceAll("_", " ") + " → " : "created as ") + x.to_status.replaceAll("_", " "),
+      h("li", {}, (x.from_status ? name(x.from_status) + " → " : "created as ") + name(x.to_status),
         h("div", { class: "meta" }, new Date(x.entered_at + "Z").toLocaleString())))),
   );
 }
 
-const ACTIONS = [
-  ["approve", "Approve", "primary"], ["force_advance", "Force advance", ""],
-  ["resume_with_guidance", "Resume", ""], ["reject", "Reject", "danger"],
-];
 function renderQueue(queue) {
   const box = $("#queue");
-  if (!queue.length) return box.replaceChildren(h("div", { class: "empty" }, "Nothing waiting on a human."));
+  if (!queue.length) return box.replaceChildren(h("div", { class: "empty" }, "Nothing is waiting on you."));
   box.replaceChildren(...queue.map((t) => h("div", { class: "card" },
     h("div", { class: "t" }, t.title),
-    h("div", { class: "meta" }, "escalated from " + (t.blocked_from || "?").replaceAll("_", " ") + " · waiting " + dur(t.seconds_in_stage)),
-    h("div", { class: "actions" }, ACTIONS.map(([type, label, cls]) =>
-      h("button", { class: cls, onclick: () => openDecision(t, type, label) }, label))),
+    t.ask_title ? h("div", { class: "meta" }, t.ask_title + (t.feature_name ? " › " + t.feature_name : "")) : "",
+    h("div", { class: "why" }, "Failed " + name(t.blocked_from) + " " + t.max_retries + " times and stopped. Waiting for you for " + dur(t.seconds_in_stage) + "."),
+    h("div", { class: "actions" },
+      h("button", { class: "primary", onclick: () => openDecision(t, "force_advance") },
+        "Accept and move on", h("small", {}, "Ignore the failure. Goes to: " + (t.accept_goes_to ? name(t.accept_goes_to) : "next step"))),
+      h("button", { onclick: () => openDecision(t, "resume_with_guidance") },
+        "Send back", h("small", {}, "Another round of attempts. Goes to: " + name(t.send_back_goes_to)))),
   )));
 }
 
@@ -259,15 +375,21 @@ function renderStuck(stuck) {
   const box = $("#stuck");
   if (!stuck.length) return box.replaceChildren(h("div", { class: "empty" }, "Nothing is stuck."));
   box.replaceChildren(...stuck.map((t) => h("div", { class: "stuckitem", onclick: () => { selectedTicket = t.id; refresh(); } },
-    h("div", {}, t.title), h("div", { class: "row" }, statusPill(t.status), dur(t.seconds_in_stage)), reasonChips(t.stuck_reasons))));
+    h("div", {}, t.title),
+    t.ask_title ? h("div", { class: "meta" }, t.ask_title) : "",
+    flagChips(t),
+    h("div", { class: "why" }, why(t).join(" ")))));
 }
 
 // ---- decision dialog ----
 let pending = null;
-function openDecision(ticket, type, label) {
-  pending = { id: ticket.id, type };
-  $("#dlgtitle").textContent = label + ": " + ticket.title;
-  $("#dlgsub").textContent = "Escalated from " + (ticket.blocked_from || "?").replaceAll("_", " ");
+function openDecision(t, type) {
+  pending = { id: t.id, type };
+  const accept = type === "force_advance";
+  $("#dlgtitle").textContent = (accept ? "Accept and move on: " : "Send back: ") + t.title;
+  $("#dlgeffect").textContent = accept
+    ? "The failed check will be overridden. The ticket moves to “" + name(t.accept_goes_to) + "”."
+    : "The ticket goes back to “" + name(t.send_back_goes_to) + "” with its attempt counter reset to 0 of " + t.max_retries + ".";
   $("#reason").value = "";
   try { $("#who").value = localStorage.getItem("cc-name") || ""; } catch (_) { $("#who").value = ""; }
   $("#dlgerr").textContent = "";
@@ -277,7 +399,7 @@ $("#dlgcancel").addEventListener("click", () => $("#dlg").close());
 $("#dlgform").addEventListener("submit", async (ev) => {
   ev.preventDefault();
   const who = $("#who").value.trim(), reason = $("#reason").value.trim();
-  if (!who || !reason) { $("#dlgerr").textContent = "Reasoning and your name are required."; return; }
+  if (!who || !reason) { $("#dlgerr").textContent = "Please give a reason and your name."; return; }
   $("#dlgok").disabled = true;
   try {
     await api("/api/tickets/" + encodeURIComponent(pending.id) + "/decision", {
@@ -290,6 +412,15 @@ $("#dlgform").addEventListener("submit", async (ev) => {
   } catch (e) { $("#dlgerr").textContent = e.message; }
   finally { $("#dlgok").disabled = false; }
 });
+
+// ---- help panel: remember if the reader closed it ----
+function setupHelp() {
+  const d = $("#help");
+  $("#helptrack").replaceChildren(...STEPS.map((s, i) => h("i", { class: "seg" + (i < 3 ? " done" : i === 3 ? " cur" : ""), title: s })));
+  $("#helplabels").replaceChildren(...STEPS.map((s) => h("span", {}, s)));
+  try { if (localStorage.getItem("cc-help-closed") === "1") d.open = false; } catch (_) {}
+  d.addEventListener("toggle", () => { try { localStorage.setItem("cc-help-closed", d.open ? "0" : "1"); } catch (_) {} });
+}
 
 // ---- refresh loop ----
 async function refresh() {
@@ -311,6 +442,7 @@ async function refresh() {
   }
 }
 $("#refresh").addEventListener("click", refresh);
+setupHelp();
 refresh();
 setInterval(() => { if (!$("#dlg").open) refresh(); }, REFRESH_MS);
 </script>
