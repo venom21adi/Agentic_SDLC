@@ -9,38 +9,36 @@
     --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2330; --muted: #657084; --line: #e1e5ec;
     --accent: #2f5fd0; --ok: #1f8a4c; --warn: #b26a00; --bad: #c0392b;
     --ok-bg: #e3f4ea; --warn-bg: #fff1d6; --bad-bg: #fbe5e2; --idle-bg: #eceff4; --run-bg: #e4ebfb;
+    --f0: #5b86c9; --f1: #d08a2e; --f2: #6a9a58; --f3: #b0568a; --f4: #3f9c98; --f5: #8570c4;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #12151b; --panel: #1b2029; --ink: #e6e9ef; --muted: #8e98aa; --line: #2b3240;
       --accent: #7ba0f5; --ok: #5cc989; --warn: #e8a948; --bad: #ef7d70;
       --ok-bg: #1b3326; --warn-bg: #3a2d14; --bad-bg: #3b1f1c; --idle-bg: #262c38; --run-bg: #1f2c4a;
+      --f0: #7aa2e3; --f1: #e8a948; --f2: #84c070; --f3: #d97fb0; --f4: #62c2bd; --f5: #a794e6;
     }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
          font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
   header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: var(--panel);
-           border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
-  header h1 { font-size: 16px; margin: 0; font-weight: 650; }
-  .kpis { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
-  .kpi { padding: 4px 10px; border-radius: 6px; background: var(--idle-bg); font-size: 12px; color: var(--muted); cursor: help; }
-  .kpi b { color: var(--ink); font-size: 14px; margin-right: 4px; }
-  .kpi.bad { background: var(--bad-bg); } .kpi.bad b { color: var(--bad); }
-  .kpi.warn { background: var(--warn-bg); } .kpi.warn b { color: var(--warn); }
+           border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 650; flex: 1; }
   .meta { color: var(--muted); font-size: 12px; }
   button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
            border-radius: 6px; padding: 5px 10px; }
   button:hover { border-color: var(--accent); }
   button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  main { display: grid; grid-template-columns: 270px minmax(0, 1fr) 330px; gap: 16px; padding: 16px 20px; align-items: start; }
-  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+  main { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 16px; padding: 16px 20px; align-items: start; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
   .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
-  .panel h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
-  .panel .sub { color: var(--muted); font-size: 12px; margin: -6px 0 10px; }
+  .panel h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+  .panel .sub { color: var(--muted); font-size: 12px; margin: -4px 0 10px; }
   .empty { color: var(--muted); font-style: italic; }
   .ask { padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
   .ask:hover, .ask.sel { border-color: var(--accent); }
+  .ask.sel { background: var(--run-bg); }
   .ask .t { font-weight: 600; margin-bottom: 4px; }
   .bar { height: 6px; background: var(--idle-bg); border-radius: 3px; overflow: hidden; margin: 6px 0 4px; }
   .bar > i { display: block; height: 100%; background: var(--ok); }
@@ -50,39 +48,62 @@
   .pill.run { background: var(--run-bg); color: var(--accent); }
   .pill.ok { background: var(--ok-bg); color: var(--ok); }
   .pill.warn { background: var(--warn-bg); color: var(--warn); }
-  .pill.bad { background: var(--bad-bg); color: var(--bad); }
-  .track { display: flex; gap: 2px; margin-top: 5px; }
-  .seg { width: 14px; height: 5px; border-radius: 2px; background: var(--idle-bg); }
-  .seg.done { background: var(--ok); } .seg.cur { background: var(--accent); } .seg.cur.warn { background: var(--warn); }
-  .tracklabels { display: flex; gap: 2px; font-size: 10px; color: var(--muted); margin-top: 3px; }
-  .tracklabels span { width: 14px; }
-  .bigtrack .seg { width: 44px; height: 8px; } .bigtrack { gap: 3px; }
-  .biglabels { display: flex; gap: 3px; font-size: 10px; color: var(--muted); margin-top: 3px; }
-  .biglabels span { width: 44px; text-align: center; overflow: visible; white-space: nowrap; }
-  table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 11px; color: var(--muted); font-weight: 600; padding: 4px 8px; cursor: help; }
-  td { padding: 8px; border-top: 1px solid var(--line); vertical-align: top; }
-  tr.tk { cursor: pointer; } tr.tk:hover td { background: var(--idle-bg); }
-  .feature h3 { margin: 0 0 2px; font-size: 14px; }
-  .feature .desc { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
-  .chips { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+
+  /* 8-step progress: equal-width columns so labels wrap instead of overlapping */
+  .stepper { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; }
+  .stepper.small { width: 112px; }
+  .step .seg { height: 6px; border-radius: 3px; background: var(--idle-bg); }
+  .step .seg.done { background: var(--ok); } .step .seg.cur { background: var(--accent); }
+  .step .seg.cur.warn { background: var(--warn); }
+  .step .lab { display: block; margin-top: 4px; font-size: 10px; line-height: 1.15; text-align: center; color: var(--muted); }
+
   .note { font-size: 13px; padding: 8px 10px; border-radius: 8px; background: var(--idle-bg); margin-top: 8px; }
-  .note.bad { background: var(--bad-bg); } .note.warn { background: var(--warn-bg); }
-  .card { border: 1px solid var(--warn); background: var(--warn-bg); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
-  .card .t { font-weight: 600; } .card .why { font-size: 12px; margin: 4px 0; }
-  .card .actions { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .note.warn { background: var(--warn-bg); }
+  .decisions { border: 1px solid var(--warn); background: var(--warn-bg); border-radius: 10px; padding: 12px; margin: 12px 0; }
+  .decisions h3 { margin: 0 0 8px; font-size: 14px; color: var(--warn); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+  .card:last-child { margin-bottom: 0; }
+  .card .t { font-weight: 600; } .card .why { font-size: 13px; margin: 4px 0; }
+  .card .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
   .card .actions button { text-align: left; }
   .card .actions small { display: block; color: var(--muted); font-size: 11px; }
-  .stuckitem { padding: 8px 0; border-top: 1px solid var(--line); cursor: pointer; }
-  .stuckitem:first-of-type { border-top: 0; }
-  .stuckitem .why { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .card .actions button.primary small { color: #dfe8ff; }
+
+  .graphwrap { overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 4px; }
+  svg text { font-family: inherit; fill: var(--ink); }
+  svg .sub { fill: var(--muted); font-size: 10.5px; }
+  .node { cursor: pointer; }
+  .node rect.box { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; }
+  .node.merged rect.box { fill: var(--ok-bg); stroke: var(--ok); }
+  .node.run rect.box { fill: var(--run-bg); stroke: var(--accent); }
+  .node.human rect.box { fill: var(--warn-bg); stroke: var(--warn); stroke-width: 2.5; }
+  .node.wait rect.box { stroke: var(--muted); stroke-dasharray: 5 3; }
+  .node.sel rect.box { stroke: var(--ink); stroke-width: 3; }
+  .node:hover rect.box { stroke-width: 2.5; }
+  .edge { fill: none; stroke: var(--muted); stroke-width: 1.6; opacity: .75; }
+  .edge.done { stroke: var(--ok); opacity: 1; } .edge.block { stroke: var(--warn); stroke-width: 2.2; opacity: 1; }
+  marker path { fill: var(--muted); } marker.done path { fill: var(--ok); } marker.block path { fill: var(--warn); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 8px; align-items: center; }
+  .legend .sw { display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px;
+                border: 1.5px solid var(--line); background: var(--panel); }
+  .legend .sw.merged { background: var(--ok-bg); border-color: var(--ok); }
+  .legend .sw.run { background: var(--run-bg); border-color: var(--accent); }
+  .legend .sw.human { background: var(--warn-bg); border-color: var(--warn); border-width: 2.5px; }
+  .legend .sw.wait { border-style: dashed; border-color: var(--muted); }
+  .legend .stripe { display: inline-block; width: 4px; height: 12px; margin-right: 5px; vertical-align: -2px; border-radius: 2px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; color: var(--muted); font-weight: 600; padding: 4px 8px; }
+  td { padding: 8px; border-top: 1px solid var(--line); vertical-align: top; }
+  tr.tk { cursor: pointer; } tr.tk:hover td { background: var(--idle-bg); }
+  .feature h3 { margin: 14px 0 4px; font-size: 14px; }
   ol.hist { list-style: none; margin: 8px 0 0; padding: 0; border-left: 2px solid var(--line); }
   ol.hist li { padding: 0 0 8px 12px; position: relative; font-size: 12px; }
   ol.hist li::before { content: ""; position: absolute; left: -6px; top: 5px; width: 8px; height: 8px;
                        border-radius: 50%; background: var(--accent); }
   details.help summary { cursor: pointer; font-weight: 650; }
   details.help .body { font-size: 13px; margin-top: 8px; }
-  details.help p { margin: 6px 0; } details.help ul { margin: 4px 0 8px 18px; padding: 0; }
+  details.help p { margin: 8px 0; }
   dialog { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink);
            padding: 18px; width: min(460px, 92vw); }
   dialog::backdrop { background: rgba(0,0,0,.45); }
@@ -96,45 +117,32 @@
 <body>
 <header>
   <h1>Agentic SDLC · Command Center</h1>
-  <div class="kpis" id="kpis"></div>
   <span class="meta" id="updated"></span>
   <button id="refresh" title="Refresh now">Refresh</button>
 </header>
 <div class="banner" id="banner"></div>
 <main>
   <aside>
-    <div class="panel"><h2>Asks</h2><div class="sub">Requests that were submitted. Click one.</div><div id="asks"></div></div>
+    <div class="panel"><h2>Asks</h2><div class="sub">Requests that were submitted. Pick one to explore.</div><div id="asks"></div></div>
   </aside>
   <section>
     <div class="panel">
       <details class="help" id="help" open>
         <summary>How to read this page</summary>
         <div class="body">
-          <p><b>The idea.</b> You submit an <b>ask</b> (a request). Agents break it into <b>features</b> and small <b>tickets</b>, and each ticket moves through the steps below. Agents do everything up to “Human review”; a person reviews and merges.</p>
-          <div class="track bigtrack" id="helptrack"></div><div class="biglabels" id="helplabels"></div>
-          <p style="margin-top:10px"><b>Colours.</b> <span class="pill">grey</span> not started or waiting &nbsp;
-            <span class="pill run">blue</span> agents working &nbsp; <span class="pill ok">green</span> done &nbsp;
-            <span class="pill warn">amber</span> waiting on a person &nbsp; <span class="pill bad">red</span> something is wrong.</p>
-          <p><b>Attempts.</b> When a review or test fails, the ticket is sent back and tries again. Each ticket gets <b>3 failed attempts</b>
-            per stretch of work; after the third it stops and appears under <b>Needs a decision</b>. “1 of 3” means one attempt has been used.</p>
-          <p><b>“Stuck” means one of three things:</b></p>
-          <ul>
-            <li><b>needs you</b> – it hit the attempt limit and agents will not try again on their own.</li>
-            <li><b>too slow</b> – it has sat in one step for longer than expected.</li>
-            <li><b>blocked</b> – it cannot start because a ticket it depends on is itself stuck.</li>
-          </ul>
-          <p><b>Your two buttons</b> (under “Needs a decision”): <b>Accept and move on</b> overrides the failed check and pushes the ticket forward;
-            <b>Send back</b> gives it another round of attempts. Each button says exactly where the ticket will go.</p>
+          <p><b>The idea.</b> You submit an <b>ask</b>. Agents break it into <b>features</b> and small <b>tickets</b>. Each ticket moves through the
+            eight steps below. Agents do every step up to “Human review”; then a person reviews and merges.</p>
+          <div id="helpsteps"></div>
+          <p><b>The dependency graph</b> shows how tickets depend on each other. An arrow from A to B means <i>B cannot start until A is merged</i>.
+            Dashed boxes are waiting on something; green are merged; blue are being worked on by agents; amber need a person.</p>
+          <p><b>Attempts.</b> When a review or test fails, the ticket goes back and tries again. Each ticket gets <b>3 failed attempts</b>; after the third,
+            agents stop and the ticket appears in an amber <b>“Needs your decision”</b> box. There you can <b>Accept and move on</b> (override the failure)
+            or <b>Send back</b> (another round of attempts). Each button says where the ticket will go.</p>
         </div>
       </details>
     </div>
-    <div class="panel" id="detail"><div class="empty">Select an ask to see its features and tickets.</div></div>
-    <div class="panel" id="ticket" hidden></div>
+    <div id="main"><div class="panel"><div class="empty">Select an ask on the left.</div></div></div>
   </section>
-  <aside>
-    <div class="panel"><h2>Needs a decision</h2><div class="sub">Tickets agents gave up on. Only you can unblock these.</div><div id="queue"></div></div>
-    <div class="panel"><h2>Stuck</h2><div class="sub">Everything that is not progressing, and why.</div><div id="stuck"></div></div>
-  </aside>
 </main>
 
 <dialog id="dlg">
@@ -171,6 +179,15 @@ function h(tag, props, ...kids) {
   for (const c of kids.flat()) e.append(c instanceof Node ? c : String(c ?? ""));
   return e;
 }
+const SVGNS = "http://www.w3.org/2000/svg";
+function s(tag, props, ...kids) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) e.append(c instanceof Node ? c : String(c ?? ""));
+  return e;
+}
 
 async function api(path, opts) {
   const r = await fetch(path, opts);
@@ -192,6 +209,7 @@ function dur(sec) {
   return sec + "s";
 }
 const list = (xs) => xs.length <= 1 ? (xs[0] || "") : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
+const clip = (str, n) => str.length > n ? str.slice(0, n - 1) + "…" : str;
 
 // status -> [plain name, what it means, colour]
 const STATUS = {
@@ -213,65 +231,201 @@ const ROLLUP = {
   not_started: ["not started", ""], analysis: ["being analysed", ""], in_progress: ["in progress", "run"],
   needs_attention: ["needs you", "warn"], complete: ["complete", "ok"],
 };
-const name = (s) => (STATUS[s] || [String(s).replaceAll("_", " ")])[0];
+const name = (st) => (STATUS[st] || [String(st).replaceAll("_", " ")])[0];
+const isWaiting = (t) => t.status === "approved" && t.waiting_on.length > 0;
 
-function statusPill(s, ticket) {
-  const waiting = s === "approved" && ticket && ticket.waiting_on.length;
-  const [label, help, cls] = STATUS[s] || [s, "", "run"];
-  return h("span", { class: "pill " + (waiting ? "" : cls), title: waiting ? "Cannot start until the tickets it depends on are merged." : help },
-    waiting ? "waiting on others" : label);
+function statusPill(t) {
+  const [label, help, cls] = STATUS[t.status] || [t.status, "", "run"];
+  return isWaiting(t)
+    ? h("span", { class: "pill", title: "Cannot start until the tickets it depends on are merged." }, "waiting on others")
+    : h("span", { class: "pill " + cls, title: help }, label);
 }
-function rollupPill(s) {
-  const [label, cls] = ROLLUP[s] || [s, ""];
-  return h("span", { class: "pill " + cls, title: "Overall state computed from the tickets underneath." }, label);
+function rollupPill(st) {
+  const [label, cls] = ROLLUP[st] || [st, ""];
+  return h("span", { class: "pill " + cls, title: "Overall state, computed from the tickets underneath." }, label);
 }
 
-// The 8 steps a ticket moves through; index of the step each status is "in".
+// ---- the 8-step progress indicator ----
 const STEPS = ["Spec", "Plan review", "Build", "Code review", "Test plan", "Testing", "Human review", "Merged"];
 const STEP_OF = { approved: -1, spec_authoring: 0, plan_critique: 1, plan_approved: 2, implementation: 2,
                   code_critique: 3, qa_strategy: 4, testing: 5, pr_ready: 6, merged: 7 };
-function tracker(status, blockedFrom, big) {
+function stepClasses(status, blockedFrom) {
   const halted = status === "needs_human";
   const at = halted ? (STEP_OF[blockedFrom] ?? -1) : (STEP_OF[status] ?? -1);
-  const segs = STEPS.map((label, i) => {
-    let cls = "seg";
-    if (status === "merged" || i < at) cls += " done";
-    else if (i === at) cls += " cur" + (halted || status === "pr_ready" ? " warn" : "");
-    return h("i", { class: cls, title: label });
+  return STEPS.map((_, i) => {
+    if (status === "merged" || i < at) return "done";
+    if (i === at) return "cur" + (halted || status === "pr_ready" ? " warn" : "");
+    return "";
   });
-  return h("div", { class: "track" + (big ? " bigtrack" : "") }, segs);
+}
+function stepper(status, blockedFrom, opts) {
+  const { labels = false, small = false } = opts || {};
+  const cls = stepClasses(status, blockedFrom);
+  return h("div", { class: "stepper" + (small ? " small" : "") },
+    STEPS.map((label, i) => h("div", { class: "step", title: label },
+      h("div", { class: "seg " + cls[i] }), labels ? h("span", { class: "lab" }, label) : "")));
 }
 
-// Plain-English reasons a ticket is flagged.
-function why(t) {
-  const out = [];
-  const r = t.stuck_reasons;
-  if (r.includes("needs_human"))
-    out.push("Stopped: it failed " + name(t.blocked_from) + " " + t.max_retries + " times, so agents will not retry until you decide.");
-  else if (r.includes("stage_timeout"))
-    out.push("It has sat in “" + name(t.status) + "” for " + dur(t.seconds_in_stage) + " without moving, which is longer than expected.");
-  if (r.includes("blocked_by_stuck_dependency")) {
-    const n = t.stuck_dependency_titles;
-    out.push("It cannot start because " + list(n) + (n.length > 1 ? " are" : " is") + " stuck.");
+// ---- dependency graph ----
+const NODE_W = 210, NODE_H = 64, GAP_X = 80, GAP_Y = 18, PAD = 14;
+
+function layoutDag(tickets, edges, featureOrder) {
+  const ids = new Set(tickets.map((t) => t.id));
+  const preds = new Map(tickets.map((t) => [t.id, []]));
+  for (const e of edges) if (ids.has(e.from) && ids.has(e.to)) preds.get(e.to).push(e.from);
+
+  const layer = new Map();
+  const depth = (id, trail) => {
+    if (layer.has(id)) return layer.get(id);
+    if (trail.has(id)) return 0;                       // defensive: the server guarantees no cycles
+    trail.add(id);
+    const ps = preds.get(id);
+    const d = ps.length ? 1 + Math.max(...ps.map((p) => depth(p, trail))) : 0;
+    layer.set(id, d);
+    return d;
+  };
+  tickets.forEach((t) => depth(t.id, new Set()));
+
+  const cols = [];
+  tickets.forEach((t) => { (cols[layer.get(t.id)] = cols[layer.get(t.id)] || []).push(t); });
+  const row = new Map();
+  cols.forEach((col, c) => {
+    const key = (t) => {
+      if (c === 0) return featureOrder.get(t.feature_id) ?? 0;
+      const ps = preds.get(t.id);
+      return ps.reduce((a, p) => a + row.get(p), 0) / ps.length;      // barycenter: sit near your parents
+    };
+    col.sort((a, b) => key(a) - key(b) || a.title.localeCompare(b.title));
+    col.forEach((t, i) => row.set(t.id, i));
+  });
+
+  const pos = new Map();
+  tickets.forEach((t) => pos.set(t.id, { x: PAD + layer.get(t.id) * (NODE_W + GAP_X), y: PAD + row.get(t.id) * (NODE_H + GAP_Y) }));
+  const width = PAD * 2 + cols.length * NODE_W + (cols.length - 1) * GAP_X;
+  const height = PAD * 2 + Math.max(...cols.map((c) => c.length)) * NODE_H + (Math.max(...cols.map((c) => c.length)) - 1) * GAP_Y;
+  return { pos, width, height };
+}
+
+function nodeClass(t) {
+  if (t.status === "merged") return "merged";
+  if (t.status === "needs_human" || t.status === "pr_ready") return "human";
+  if (isWaiting(t)) return "wait";
+  return STATUS[t.status] && STATUS[t.status][2] === "run" ? "run" : "";
+}
+
+function dagSvg(ask) {
+  const tickets = ask.features.flatMap((f) => f.tickets);
+  if (!tickets.length) return null;
+  const featureOrder = new Map(ask.features.map((f, i) => [f.id, i]));
+  const byId = new Map(tickets.map((t) => [t.id, t]));
+  const { pos, width, height } = layoutDag(tickets, ask.edges, featureOrder);
+
+  const svg = s("svg", { width, height, viewBox: "0 0 " + width + " " + height, role: "img",
+                         "aria-label": "Ticket dependency graph" });
+  const marker = (id, cls) => s("marker", { id, class: cls, viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" },
+    s("path", { d: "M0 0 L10 5 L0 10 z" }));
+  svg.append(s("defs", {}, marker("ar-pending", ""), marker("ar-done", "done"), marker("ar-block", "block")));
+
+  for (const e of ask.edges) {
+    const a = pos.get(e.from), b = pos.get(e.to), src = byId.get(e.from);
+    if (!a || !b) continue;
+    const x1 = a.x + NODE_W, y1 = a.y + NODE_H / 2, x2 = b.x, y2 = b.y + NODE_H / 2, mx = (x2 - x1) / 2;
+    const state = src.status === "merged" ? "done" : (src.status === "needs_human" || src.stuck_reasons.includes("blocked_by_stuck_dependency")) ? "block" : "";
+    svg.append(s("path", { class: "edge " + state, d: "M" + x1 + " " + y1 + " C" + (x1 + mx) + " " + y1 + "," + (x2 - mx) + " " + y2 + "," + x2 + " " + y2,
+                           "marker-end": "url(#ar-" + (state || "pending") + ")" },
+      s("title", {}, byId.get(e.from).title + " → " + byId.get(e.to).title + ": " + e.reasoning)));
   }
-  return out;
-}
-const FLAG = { needs_human: "needs you", stage_timeout: "too slow", blocked_by_stuck_dependency: "blocked" };
-function flagChips(t) {
-  const tips = why(t).join(" ");
-  return h("span", { class: "chips" }, t.stuck_reasons.map((r) => h("span", { class: "pill bad", title: tips }, FLAG[r] || r)));
-}
-function attempts(t) { return t.retry_count + " of " + t.max_retries; }
 
-function renderKpis(asks, stuck, queue) {
-  const total = asks.reduce((n, a) => n + a.total, 0);
-  $("#kpis").replaceChildren(
-    h("span", { class: "kpi", title: "Requests submitted so far." }, h("b", {}, asks.length), "asks"),
-    h("span", { class: "kpi", title: "Tickets across all asks." }, h("b", {}, total), "tickets"),
-    h("span", { class: "kpi" + (queue.length ? " warn" : ""), title: "Tickets that agents gave up on. Only a person can unblock them." },
-      h("b", {}, queue.length), "need your decision"),
-    h("span", { class: "kpi" + (stuck.length ? " bad" : ""), title: "Tickets not progressing: need a decision, too slow, or blocked by another stuck ticket." },
-      h("b", {}, stuck.length), "stuck"),
+  for (const t of tickets) {
+    const p = pos.get(t.id), fi = featureOrder.get(t.feature_id) ?? 0;
+    const cls = stepClasses(t.status, t.blocked_from);
+    const g = s("g", { class: "node " + nodeClass(t) + (t.id === selectedTicket ? " sel" : ""), transform: "translate(" + p.x + "," + p.y + ")",
+                       onclick: () => { selectedTicket = t.id; refresh(); }, tabindex: 0, role: "button" },
+      s("title", {}, t.title + " — " + (isWaiting(t) ? "waiting for " + list(t.waiting_on_titles) : (STATUS[t.status] || [])[1] || t.status)),
+      s("rect", { class: "box", width: NODE_W, height: NODE_H, rx: 9 }),
+      s("rect", { x: 0, y: 8, width: 5, height: NODE_H - 16, rx: 2.5, style: "fill:var(--f" + (fi % 6) + ")" }),
+      s("text", { x: 16, y: 21, "font-size": 12.5, "font-weight": 600 }, clip(t.title, 26)),
+      s("text", { x: 16, y: 38, class: "sub" }, (isWaiting(t) ? "waiting on others" : name(t.status)) + (t.retry_count ? " · attempt " + t.retry_count + "/" + t.max_retries : "")),
+    );
+    cls.forEach((c, i) => g.append(s("rect", { x: 16 + i * 14, y: 47, width: 11, height: 4, rx: 2,
+      style: "fill:" + (c.startsWith("done") ? "var(--ok)" : c.startsWith("cur") ? (c.includes("warn") ? "var(--warn)" : "var(--accent)") : "var(--idle-bg)") })));
+    svg.append(g);
+  }
+  return svg;
+}
+
+function graphPanel(ask) {
+  const svg = dagSvg(ask);
+  if (!svg) return h("div", { class: "note" }, "This ask has not been broken into tickets yet, so there is no graph.");
+  const sw = (cls, text) => h("span", {}, h("i", { class: "sw " + cls }), text);
+  return h("div", {},
+    h("div", { class: "graphwrap" }, svg),
+    h("div", { class: "legend" },
+      sw("merged", "merged"), sw("run", "agents working"), sw("wait", "waiting on others"), sw("human", "needs a person"),
+      ...ask.features.map((f, i) => h("span", {}, h("i", { class: "stripe", style: "background:var(--f" + (i % 6) + ")" }), f.name))),
+  );
+}
+
+// ---- needs-a-decision banner (only this ask's tickets) ----
+function decisionsPanel(ask) {
+  if (!ask.decisions.length) return "";
+  return h("div", { class: "decisions" },
+    h("h3", {}, ask.decisions.length === 1 ? "1 ticket needs your decision" : ask.decisions.length + " tickets need your decision"),
+    ...ask.decisions.map((t) => h("div", { class: "card" },
+      h("div", { class: "t" }, t.title),
+      h("div", { class: "meta" }, t.feature_name || ""),
+      h("div", { class: "why" }, "It failed " + name(t.blocked_from) + " " + t.max_retries + " times, so agents stopped. Waiting for you for " + dur(t.seconds_in_stage) + "."),
+      h("div", { class: "actions" },
+        h("button", { class: "primary", onclick: () => openDecision(t, "force_advance") },
+          "Accept and move on", h("small", {}, "Ignore the failure → " + (t.accept_goes_to ? name(t.accept_goes_to) : "next step"))),
+        h("button", { onclick: () => openDecision(t, "resume_with_guidance") },
+          "Send back", h("small", {}, "Another 3 attempts → " + name(t.send_back_goes_to)))),
+    )));
+}
+
+// ---- ticket table and detail ----
+function ticketRow(t) {
+  return h("tr", { class: "tk", onclick: () => { selectedTicket = t.id; refresh(); } },
+    h("td", {}, t.title),
+    h("td", {}, statusPill(t), stepper(t.status, t.blocked_from, { small: true })),
+    h("td", {}, t.retry_count + " of " + t.max_retries),
+    h("td", {}, t.waiting_on_titles.length ? list(t.waiting_on_titles) : "—"),
+  );
+}
+
+function ticketsTable(ask) {
+  if (!ask.features.length) return "";
+  return h("div", {}, h("h2", { style: "margin-top:4px" }, "Tickets by feature"),
+    ...ask.features.map((f) => h("div", { class: "feature" },
+      h("h3", {}, f.name, " ", rollupPill(f.status)),
+      h("table", {},
+        h("thead", {}, h("tr", {}, h("th", {}, "Ticket"), h("th", {}, "Step"),
+          h("th", { title: "Failed attempts used. At 3 the ticket stops and asks you." }, "Attempts"),
+          h("th", { title: "Tickets that must be merged before this one can start." }, "Waiting for"))),
+        h("tbody", {}, f.tickets.map(ticketRow))))));
+}
+
+function ticketDetail(t) {
+  if (!t) return "";
+  const notes = [];
+  if (t.status === "needs_human")
+    notes.push(h("div", { class: "note warn" }, "It failed " + name(t.blocked_from) + " " + t.max_retries + " times, so agents stopped. Use the buttons in the amber box above to decide what happens next."));
+  else if (t.waiting_on_titles.length)
+    notes.push(h("div", { class: "note" }, "Waiting for " + list(t.waiting_on_titles) + " to be merged first (see the arrows in the graph)."));
+  if (t.retry_count > 0 && t.status !== "needs_human")
+    notes.push(h("div", { class: "note warn" }, "Attempt " + t.retry_count + " of " + t.max_retries + ": it failed and was sent back. At " + t.max_retries + " it stops and asks you."));
+  return h("div", { class: "panel", style: "margin-top:16px" },
+    h("div", { class: "row" }, h("h2", {}, "Ticket detail"), h("button", { onclick: () => { selectedTicket = null; refresh(); } }, "Close")),
+    h("div", { style: "font-size:16px;font-weight:650" }, t.title),
+    t.feature_name ? h("div", { class: "meta" }, "Feature: " + t.feature_name) : "",
+    h("div", { class: "row", style: "margin:8px 0" }, statusPill(t), "in this step for " + dur(t.seconds_in_stage)),
+    stepper(t.status, t.blocked_from, { labels: true }),
+    h("div", { class: "meta", style: "margin-top:8px" }, (STATUS[t.status] || [])[1] || ""),
+    ...notes,
+    h("div", { class: "meta", style: "margin-top:12px" }, "History (oldest first)"),
+    h("ol", { class: "hist" }, t.history.map((x) =>
+      h("li", {}, (x.from_status ? name(x.from_status) + " → " : "created as ") + name(x.to_status),
+        h("div", { class: "meta" }, new Date(x.entered_at + "Z").toLocaleString())))),
   );
 }
 
@@ -282,103 +436,32 @@ function renderAsks(asks) {
       class: "ask" + (a.id === selectedAsk ? " sel" : ""), onclick: () => { selectedAsk = a.id; selectedTicket = null; refresh(); },
     },
     h("div", { class: "t" }, a.title),
-    h("div", { class: "row" }, rollupPill(a.status),
-      a.total ? Math.round(a.percent_complete) + "% done" : "no tickets yet"),
+    h("div", { class: "row" }, rollupPill(a.status), a.total ? Math.round(a.percent_complete) + "% done" : "no tickets yet"),
     h("div", { class: "bar" }, h("i", { style: "width:" + a.percent_complete + "%" })),
     h("div", { class: "row" }, a.total + (a.total === 1 ? " ticket" : " tickets"),
-      a.stuck ? h("span", { class: "pill bad", title: "Tickets under this ask that are not progressing." }, a.stuck + " stuck") : ""),
+      a.needs_decision ? h("span", { class: "pill warn", title: "Tickets under this ask are waiting for your decision." }, a.needs_decision + " need you") : ""),
   )));
 }
 
-function ticketRow(t) {
-  return h("tr", { class: "tk", onclick: () => { selectedTicket = t.id; refresh(); } },
-    h("td", {}, t.title,
-      t.waiting_on_titles.length ? h("div", { class: "meta" }, "waiting for " + list(t.waiting_on_titles)) : ""),
-    h("td", {}, statusPill(t.status, t), tracker(t.status, t.blocked_from)),
-    h("td", {}, attempts(t)),
-    h("td", {}, dur(t.seconds_in_stage)),
-    h("td", {}, t.stuck_reasons.length ? flagChips(t) : ""),
-  );
-}
-
-function renderDetail(ask) {
-  const box = $("#detail");
-  if (!ask) return box.replaceChildren(h("div", { class: "empty" }, "Select an ask to see its features and tickets."));
-  const counts = Object.entries(ask.by_status).map(([s, n]) => n + " " + name(s));
-  const kids = [
-    h("h2", {}, "Ask"),
-    h("div", { style: "font-size:16px;font-weight:650" }, ask.title),
-    h("div", { class: "row", style: "margin:6px 0" }, rollupPill(ask.status),
-      ask.total ? Math.round(ask.percent_complete) + "% of tickets merged" : "not broken into tickets yet"),
-    counts.length ? h("div", { class: "meta" }, counts.join(" · ")) : "",
-  ];
-  if (!ask.features.length) kids.push(h("div", { class: "note" }, "This ask has not been broken into features and tickets yet."));
-  for (const f of ask.features) {
-    kids.push(h("div", { class: "feature", style: "margin-top:16px" },
-      h("h3", {}, f.name, " ", rollupPill(f.status)),
-      h("div", { class: "desc" }, "Feature · " + f.tickets.filter((t) => t.status === "merged").length + " of " + f.total + " tickets merged"),
-      h("table", {},
-        h("thead", {}, h("tr", {},
-          h("th", { title: "One small unit of work." }, "Ticket"),
-          h("th", { title: "Where it is now. The bar shows the 8 steps: Spec, Plan review, Build, Code review, Test plan, Testing, Human review, Merged." }, "Step"),
-          h("th", { title: "Failed attempts used in the current stretch of work. At the limit it stops and asks you." }, "Attempts"),
-          h("th", { title: "How long it has been in its current step." }, "Time here"),
-          h("th", { title: "Why it is flagged, if it is. Hover a flag for details." }, "Flags"))),
-        h("tbody", {}, f.tickets.map(ticketRow))),
-    ));
-  }
-  box.replaceChildren(...kids);
-}
-
-function renderTicket(t) {
-  const box = $("#ticket");
-  if (!t) { box.hidden = true; return; }
-  box.hidden = false;
-  const problems = why(t);
-  const notes = [];
-  if (problems.length) notes.push(h("div", { class: "note bad" }, problems.join(" ")));
-  else if (t.waiting_on_titles.length) notes.push(h("div", { class: "note" }, "Waiting for " + list(t.waiting_on_titles) + " to be merged before it can start."));
-  if (t.retry_count > 0 && t.status !== "needs_human")
-    notes.push(h("div", { class: "note warn" }, attempts(t) + " attempts used: it failed and was sent back. At " + t.max_retries + " it stops and asks you."));
+function renderMain(ask, ticket) {
+  const box = $("#main");
+  if (!ask) return box.replaceChildren(h("div", { class: "panel" }, h("div", { class: "empty" }, "Select an ask on the left.")));
+  const counts = Object.entries(ask.by_status).map(([st, n]) => n + " " + name(st));
   box.replaceChildren(
-    h("div", { class: "row" }, h("h2", {}, "Ticket detail"), h("button", { onclick: () => { selectedTicket = null; refresh(); } }, "Close")),
-    h("div", { style: "font-size:16px;font-weight:650" }, t.title),
-    t.ask_title ? h("div", { class: "meta" }, t.ask_title + (t.feature_name ? " › " + t.feature_name : "")) : "",
-    h("div", { class: "row", style: "margin:8px 0 0" }, statusPill(t.status, t), "attempts " + attempts(t) + " · here for " + dur(t.seconds_in_stage)),
-    h("div", {}, tracker(t.status, t.blocked_from, true)),
-    h("div", { class: "biglabels" }, STEPS.map((s) => h("span", {}, s))),
-    h("div", { class: "meta", style: "margin-top:6px" }, (STATUS[t.status] || [])[1] || ""),
-    ...notes,
-    h("div", { class: "meta", style: "margin-top:12px" }, "History (oldest first)"),
-    h("ol", { class: "hist" }, t.history.map((x) =>
-      h("li", {}, (x.from_status ? name(x.from_status) + " → " : "created as ") + name(x.to_status),
-        h("div", { class: "meta" }, new Date(x.entered_at + "Z").toLocaleString())))),
+    h("div", { class: "panel" },
+      h("h2", {}, "Ask"),
+      h("div", { style: "font-size:17px;font-weight:650" }, ask.title),
+      h("div", { class: "row", style: "margin:6px 0" }, rollupPill(ask.status),
+        ask.total ? Math.round(ask.percent_complete) + "% of tickets merged" : "not broken into tickets yet"),
+      counts.length ? h("div", { class: "meta" }, counts.join(" · ")) : "",
+      decisionsPanel(ask),
+      h("h2", { style: "margin-top:14px" }, "Dependency graph"),
+      h("div", { class: "sub" }, "An arrow from A to B means B cannot start until A is merged. Click a ticket for details."),
+      graphPanel(ask),
+      ticketDetail(ticket),
+    ),
+    h("div", { class: "panel" }, ticketsTable(ask) || h("div", { class: "empty" }, "No tickets yet.")),
   );
-}
-
-function renderQueue(queue) {
-  const box = $("#queue");
-  if (!queue.length) return box.replaceChildren(h("div", { class: "empty" }, "Nothing is waiting on you."));
-  box.replaceChildren(...queue.map((t) => h("div", { class: "card" },
-    h("div", { class: "t" }, t.title),
-    t.ask_title ? h("div", { class: "meta" }, t.ask_title + (t.feature_name ? " › " + t.feature_name : "")) : "",
-    h("div", { class: "why" }, "Failed " + name(t.blocked_from) + " " + t.max_retries + " times and stopped. Waiting for you for " + dur(t.seconds_in_stage) + "."),
-    h("div", { class: "actions" },
-      h("button", { class: "primary", onclick: () => openDecision(t, "force_advance") },
-        "Accept and move on", h("small", {}, "Ignore the failure. Goes to: " + (t.accept_goes_to ? name(t.accept_goes_to) : "next step"))),
-      h("button", { onclick: () => openDecision(t, "resume_with_guidance") },
-        "Send back", h("small", {}, "Another round of attempts. Goes to: " + name(t.send_back_goes_to)))),
-  )));
-}
-
-function renderStuck(stuck) {
-  const box = $("#stuck");
-  if (!stuck.length) return box.replaceChildren(h("div", { class: "empty" }, "Nothing is stuck."));
-  box.replaceChildren(...stuck.map((t) => h("div", { class: "stuckitem", onclick: () => { selectedTicket = t.id; refresh(); } },
-    h("div", {}, t.title),
-    t.ask_title ? h("div", { class: "meta" }, t.ask_title) : "",
-    flagChips(t),
-    h("div", { class: "why" }, why(t).join(" ")))));
 }
 
 // ---- decision dialog ----
@@ -416,8 +499,7 @@ $("#dlgform").addEventListener("submit", async (ev) => {
 // ---- help panel: remember if the reader closed it ----
 function setupHelp() {
   const d = $("#help");
-  $("#helptrack").replaceChildren(...STEPS.map((s, i) => h("i", { class: "seg" + (i < 3 ? " done" : i === 3 ? " cur" : ""), title: s })));
-  $("#helplabels").replaceChildren(...STEPS.map((s) => h("span", {}, s)));
+  $("#helpsteps").replaceChildren(stepper("code_critique", null, { labels: true }));
   try { if (localStorage.getItem("cc-help-closed") === "1") d.open = false; } catch (_) {}
   d.addEventListener("toggle", () => { try { localStorage.setItem("cc-help-closed", d.open ? "0" : "1"); } catch (_) {} });
 }
@@ -425,15 +507,14 @@ function setupHelp() {
 // ---- refresh loop ----
 async function refresh() {
   try {
-    const [asks, stuck, queue] = await Promise.all([api("/api/asks"), api("/api/stuck"), api("/api/decisions")]);
+    const asks = await api("/api/asks");
     if (selectedAsk && !asks.some((a) => a.id === selectedAsk)) selectedAsk = null;
     if (!selectedAsk && asks.length) selectedAsk = asks[0].id;
     const [ask, ticket] = await Promise.all([
       selectedAsk ? api("/api/asks/" + encodeURIComponent(selectedAsk)).catch(() => null) : null,
       selectedTicket ? api("/api/tickets/" + encodeURIComponent(selectedTicket)).catch(() => null) : null,
     ]);
-    renderKpis(asks, stuck, queue); renderAsks(asks); renderDetail(ask);
-    renderTicket(ticket); renderQueue(queue); renderStuck(stuck);
+    renderAsks(asks); renderMain(ask, ticket);
     $("#banner").style.display = "none";
     $("#updated").textContent = "updated " + new Date().toLocaleTimeString();
   } catch (e) {
