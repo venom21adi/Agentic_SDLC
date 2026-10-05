@@ -40,3 +40,11 @@ Honest state of the harness. Update this as things change.
 - Postgres: **verified for the first time** (compose up, tables created, seed, read endpoints, decision write with FKs). Found and fixed: SQLAlchemy 2.1 picks the psycopg3 driver for plain `postgresql://` URLs; the store now normalises to psycopg2.
 - Dashboard (`ui/index.html`): one dependency-free page. Asks on the left; for the selected ask it shows a dependency graph (tickets as nodes laid out by dependency depth, arrows = 'must be merged first', colour = state), that ask's own 'needs your decision' box (Accept and move on / Send back, each stating the destination), and tickets by feature. Verified by running the page's real JS against the live server in jsdom (graph nodes/edges, no overlaps, per-ask scoping, detail panel, no script errors) and a headless Edge screenshot. Not tried on other browsers or small screens. No auth: keep it on 127.0.0.1.
 - UI deliberately does not show the backend's 'too slow' (stage timeout) signal or a global stuck list; the API still computes them (`/api/stuck`, `/api/decisions`). Human guidance text is stored but no agent reads it yet.
+
+## Real LLM (DeepSeek)
+- Wired through `llm.py`: OpenAI-compatible client pointed at https://api.deepseek.com, JSON mode on, timeouts and transport retries, every call metered (tokens, estimated cost at peak list prices, per agent and per ticket), and a hard `RUN_TOKEN_CAP` that ends a run cleanly without counting a ticket failure. Critics run at temperature 0.
+- The account's model list is `deepseek-flash` and `deepseek-v4-pro` (checked via the API; the older `deepseek-chat` name is gone). All roles default to `deepseek-flash`.
+- `python smoke_llm.py` makes two tiny real calls. Verified: key, JSON mode, and the real Business Analysis agent against the real model (validator accepted the output).
+- **Finding:** the real model over-decomposes (a small CSV tool became 15-20+ tickets, including separate tickets for help text and README). Each ticket costs ~8 agent stages, so this is the first thing to fix, via prompt sizing guidance. See `docs/skill-shortlist.md`.
+- Not yet run with a real model: planning, spec, both critics (the quote check is the main risk), implementation, QA strategy. `DockerRunner` has still never run (sandbox image unbuilt).
+- Draft ask for the real run: `asks/task_tracker.md`.

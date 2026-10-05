@@ -37,7 +37,7 @@ def main():
                 content = f.read()
             with open(env_file, 'w') as f:
                 f.write(content)
-            print("✅ .env file created. Please edit it and add your OPENAI_API_KEY")
+            print("✅ .env file created. Please edit it and add your DEEPSEEK_API_KEY (or OPENAI_API_KEY)")
         else:
             print("⚠️  .env.example not found, please create .env manually")
     else:
@@ -64,7 +64,7 @@ def main():
     print("Setup complete! 🎉")
     print("=" * 60)
     print("\nNext steps:")
-    print("1. Edit .env and add your OPENAI_API_KEY")
+    print("1. Edit .env and add your DEEPSEEK_API_KEY (or OPENAI_API_KEY)")
     print("2. Run: python main.py")
     print("\nDatabase status:")
     print("  - Container: agentic-sdlc-postgres")
